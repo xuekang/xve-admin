@@ -355,3 +355,24 @@ export function removeClass(ele, cls) {
     ele.className = ele.className.replace(reg, ' ')
   }
 }
+
+/**
+ * @param {mix} value
+ * @returns {boolean}
+ */
+export function isFalse(value) {
+  return ['', undefined, null].indexOf(value) > -1 || (Array.isArray(value) && value.length === 0)
+}
+
+/**
+ * @param {object} query
+ * @returns {object}
+ */
+export function removeEmptyKeys(query) {
+  return Object.keys(query)
+    .filter(k => {
+      const value = query[k]
+      return !isFalse(value)
+    })
+    .reduce((obj, k) => (((obj[k] = query[k]), obj)), {})
+}
