@@ -6,7 +6,7 @@
 
 <script>
 import FormRender from '@/components/FormGenerator/parser'
-import { getFormConf, getFormData, submitFormData } from '@/api/table-form-generator'
+import { getFormConf, getFormData } from '@/api/table-form-generator'
 import { removeEmptyKeys } from '@/utils'
 
 export default {
