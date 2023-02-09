@@ -23,11 +23,3 @@ export function getFormData(getFormDataUrl, data) {
   })
 }
 
-export function submitFormData(submitFormDataUrl, data) {
-  return request({
-    url: submitFormDataUrl,
-    method: 'post',
-    data
-  })
-}
-

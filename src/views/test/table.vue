@@ -1,7 +1,6 @@
 <template>
-  <div class="box-container">
+  <div v-loading="loading" class="box-container">
     <table-generator v-bind="tableConf" />
-    <!-- <el-button type="primary" @click="testPage">主要按钮</el-button> -->
   </div>
 </template>
 
@@ -16,51 +15,17 @@ export default {
   props: {},
   data() {
     return {
-      tableConf: {
-        // url: '/auth/User/list',
-        // columns: [
-        //   {
-        //     prop: 'user_name',
-        //     label: '用户名'
-        //   },
-        //   {
-        //     prop: 'user_phone',
-        //     label: '用户手机号'
-        //   }
-        // ],
-        // searchForm: [
-        //   {
-        //     type: 'input',
-        //     id: 'user_name',
-        //     label: '用户名',
-        //     el: {
-        //       placeholder: '请输入'
-        //     }
-        //   }
-        // ],
-        // form: [
-        //   {
-        //     type: 'input',
-        //     id: 'user_name',
-        //     label: '用户名',
-        //     el: {
-        //       placeholder: '请输入'
-        //     },
-        //     rules: [
-        //       {
-        //         required: true,
-        //         message: '请输入用户名',
-        //         trigger: 'blur'
-        //       }
-        //     ]
-        //   }
-        // ]
-      }
+      loading: false,
+      tableConf: {}
     }
   },
   computed: {},
   watch: {},
+  beforeCreate() {
+
+  },
   created() {
+    // console.log(this._.uniqueId())
     this.getTableConf()
   },
   mounted() {
@@ -68,12 +33,14 @@ export default {
   },
   methods: {
     // 获取表格配置
-    getTableConf() {
+    async getTableConf() {
+      this.loading = true
       const auth_id = this._.get(this.$route, 'meta.auth_id', '')
-      getTableConf(auth_id).then(res => {
+      await getTableConf(auth_id).then(res => {
         console.log('表格配置', res.data)
         this.tableConf = { ...this.tableConf, ...res.data }
       })
+      this.loading = false
     },
     testPage() {
       this.$router.replace({

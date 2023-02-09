@@ -71,8 +71,8 @@ function renderFrom(h) {
 
 function formBtns(h) {
   return <el-col>
-    <el-form-item size='large'>
-      <el-button type='primary' onClick={this.submitForm}>提交</el-button>
+    <el-form-item size={this.formConf.size}>
+      <el-button type='primary' loading={this.formConf.loading} onClick={this.submitForm}>提交</el-button>
       <el-button onClick={this.resetForm}>重置</el-button>
     </el-form-item>
   </el-col>
@@ -158,7 +158,7 @@ export default {
             config.regList.push(required)
           }
           rules[cur.__vModel__] = config.regList.map(item => {
-            item.pattern && (item.pattern = eval(item.pattern))
+            item.pattern && (item.pattern = global.eval(item.pattern))
             item.trigger = ruleTrigger && ruleTrigger[config.tag]
             return item
           })
@@ -172,10 +172,17 @@ export default {
       this.$emit('reset')
     },
     submitForm() {
+      // this.loading = true
+      // this.$data.loading = true
+      // this.$set(this.$data, 'loading', true)
+      // console.log('loading', this, this.loading)
+
       this.$refs[this.formConf.formRef].validate(valid => {
         if (!valid) return false
+
         // 触发sumit事件
         this.$emit('submit', this[this.formConf.formModel])
+        // this.loading = false
         return true
       })
     }

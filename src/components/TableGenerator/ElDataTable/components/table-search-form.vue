@@ -41,6 +41,7 @@ export default {
         'span': 6,
         'gutter': 15,
         'disabled': false,
+        'loading': false,
         'formBtns': false
       },
       formBtn: {
@@ -132,7 +133,11 @@ export default {
       // 过滤空值
       formData = removeEmptyKeys(formData)
       // console.log('表格查询数据：', formData)
-      this.$emit('search', formData)
+      this.formConf.loading = true
+      const done = () => {
+        this.formConf.loading = false
+      }
+      this.$emit('search', formData, done)
     },
     resetSearchForm() {
       // console.log('表格查询数据重置')
