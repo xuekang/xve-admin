@@ -12,32 +12,32 @@
         @resetSearch="resetSearch"
       />
 
-      <el-form v-if="hasHeader" :inline="true">
+      <el-row v-if="hasHeader" class="table-header-button-container">
         <!-- 自定义按钮 -->
         <template v-for="(btn) in headerButtons">
-          <el-form-item v-if="'show' in btn ? btn.show(selected) : true" :key="btn.renderKey">
+          <div v-if="'show' in btn ? btn.show(selected) : true" :key="btn.renderKey" class="table-header-button-item">
             <table-button
               :is-text="btn.isText === undefined ? false : btn.isText"
               :button-size="buttonSize"
               :disabled="'disabled' in btn ? btn.disabled(selected) : false"
               :click="btn.atClick"
+              :get-request-params="getRequestParams"
               v-bind="btn"
-              @confirm="onConfirm"
-              @onShowFormDialog="onShowFormDialog"
+              @onConfirm="onConfirm"
             >
               {{
                 typeof btn.text === 'function' ? btn.text(selected) : btn.text
               }}
             </table-button>
-          </el-form-item>
+          </div>
         </template>
 
         <!--@slot 额外的header内容, 当headerButtons不满足需求时可以使用，传入selected -->
         <slot name="header" :selected="selected" />
 
         <!--@collapse 自定义折叠按钮, 默认的样式文案不满足时可以使用。传入当前折叠状态 isSearchCollapse: Boolean -->
-        <slot name="collapse" :isSearchCollapse="isSearchCollapse">
-          <el-form-item class="button-container">
+        <!-- <slot name="collapse" :isSearchCollapse="isSearchCollapse">
+          <div class="table-header-button-item">
             <el-button
               v-if="canSearchCollapse"
               type="default"
@@ -45,9 +45,9 @@
               :icon="`el-icon-arrow-${isSearchCollapse ? 'down' : 'up'}`"
               @click="isSearchCollapse = !isSearchCollapse"
             >{{ isSearchCollapse ? '展开' : '折叠' }}搜索</el-button>
-          </el-form-item>
-        </slot>
-      </el-form>
+          </div>
+        </slot> -->
+      </el-row>
 
       <el-table
         ref="table"
@@ -151,18 +151,17 @@
           v-bind="{align: columnsAlign, ...operationAttrs}"
         >
           <template slot-scope="scope">
-
             <template v-for="(btn) in columnButtons">
               <table-button
                 v-if="'show' in btn ? btn.show(scope.row) : true"
-                :key="makeBtnRenderId(btn.renderKey)"
+                :key="_.uniqueId(btn.renderKey)"
                 :is-text="btn.isText === undefined ? true : btn.isText"
                 v-bind="btn"
                 :click="btn.atClick"
+                :get-request-params="getRequestParams"
                 :row-data="scope.row"
                 :disabled="'disabled' in btn ? btn.disabled(scope.row) : false"
                 @onConfirm="onConfirm"
-                @onShowFormDialog="onShowFormDialog"
               >
                 {{
                   typeof btn.text === 'function'
@@ -192,13 +191,6 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-
-      <the-dialog
-        ref="dialog"
-        :button-size="buttonSize"
-        @onConfirm="onConfirm"
-      />
-
     </template>
   </div>
 </template>
@@ -207,7 +199,6 @@
 import TableSearchForm from './components/table-search-form.vue'
 import TableButton from './components/table-button.vue'
 import ElDataTableColumn from './components/el-data-table-column'
-import TheDialog from './components/the-dialog.vue'
 import * as queryUtil from './utils/query'
 import getSelectStrategy from './utils/select-strategy'
 import getLocatedSlotKeys from './utils/extract-keys'
@@ -224,8 +215,7 @@ export default {
   components: {
     TableSearchForm,
     TableButton,
-    ElDataTableColumn,
-    TheDialog
+    ElDataTableColumn
   },
 
   props: {
@@ -243,6 +233,13 @@ export default {
     id: {
       type: String,
       default: 'id'
+    },
+    /**
+     * 栏目数据参数字段名
+     */
+    columnParams: {
+      type: String,
+      default: 'column_params'
     },
     /**
      * 分页请求的第一页的值(有的接口0是第一页)
@@ -401,94 +398,9 @@ export default {
       default: false
     },
     /**
-     * 新增按钮文案
-     */
-    newText: {
-      type: String,
-      default: '新增'
-    },
-    /**
-     * 修改按钮文案
-     */
-    editText: {
-      type: String,
-      default: '修改'
-    },
-    /**
-     * 查看按钮文案
-     */
-    viewText: {
-      type: String,
-      default: '查看'
-    },
-    /**
-     * 删除按钮文案
-     */
-    deleteText: {
-      type: String,
-      default: '删除'
-    },
-    /**
-     * 删除提示语。接受要删除的数据（单个对象或数组）；返回字符串
-     * @param {object|object[]} 要删除的数据 - 单个对象或数组
-     * @return {string}
-     */
-    deleteMessage: {
-      type: Function,
-      default() {
-        return `确认${this.deleteText}吗?`
-      }
-    },
-    /**
-     * 某行数据是否可以删除, 返回true表示可以, 控制的是单选时单行的删除按钮
-     */
-    canDelete: {
-      type: Function,
-      default() {
-        return true
-      }
-    },
-    /**
-     * 点击新增按钮时的方法, 当默认新增方法不满足需求时使用, 需要返回promise
-     * 参数(data, row) data 是form表单的数据, row 是当前行的数据, 只有isTree为true时, 点击操作列的新增按钮才会有值
-     */
-    onNew: {
-      type: Function,
-      default(data) {
-        return this.$axios.post(this.url, data, this.axiosConfig)
-      }
-    },
-    /**
-     * 点击修改按钮时的方法, 当默认修改方法不满足需求时使用, 需要返回promise
-     * 参数(data, row) data 是form表单的数据, row 是当前行的数据
-     */
-    onEdit: {
-      type: Function,
-      default(data) {
-        return this.$axios.put(
-          `${this.url}/${this.row[this.id]}`,
-          data,
-          this.axiosConfig
-        )
-      }
-    },
-    /**
-     * 点击删除按钮时的方法, 当默认删除方法不满足需求时使用, 需要返回promise
-     * 多选时, 参数为selected, 代表选中的行组成的数组; 非多选时参数为row, 代表单行的数据
-     */
-    onDelete: {
-      type: Function,
-      default(data) {
-        const ids = Array.isArray(data)
-          ? data.map(v => v[this.id]).join(',')
-          : data[this.id]
-        return this.$axios.delete(this.url + '/' + ids, this.axiosConfig)
-      }
-    },
-    /**
      * crud 操作成功后会调用的函数，默认是 this.$message.success('操作成功')
      * 接受两个参数：
-     * type，操作的类型，可能的值有 new | edit | delete；
+     * msg
      * data，操作的数据对象
      */
     onSuccess: {
@@ -603,47 +515,10 @@ export default {
       }
     },
     /**
-     * 新增弹窗的标题，默认为newText的值
-     */
-    dialogNewTitle: {
-      type: String,
-      default() {
-        return this.newText
-      }
-    },
-    /**
-     * 修改弹窗的标题，默认为editText的值
-     */
-    dialogEditTitle: {
-      type: String,
-      default() {
-        return this.editText
-      }
-    },
-    /**
-     * 查看弹窗的标题，默认为viewText的值
-     */
-    dialogViewTitle: {
-      type: String,
-      default() {
-        return this.viewText
-      }
-    },
-    /**
-     * 对话框属性设置, 详情配置参考element-ui官网
-     * @link https://element.eleme.cn/2.4/#/zh-CN/component/dialog#attributes
-     */
-    dialogAttrs: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
-    /**
      * 同extraBody
      * @deprecated
      */
-    extraParams: {
+    tableParams: {
       type: Object,
       default() {
         return undefined
@@ -787,7 +662,7 @@ export default {
       )
     },
     _extraBody() {
-      return this.extraBody || this.extraParams || {}
+      return this.extraBody || this.tableParams || {}
     },
     _extraQuery() {
       return this.extraQuery || this.customQuery || {}
@@ -851,10 +726,6 @@ export default {
     }
   },
   methods: {
-    // 生成渲染id
-    makeBtnRenderId(id) {
-      return this._.uniqueId(id)
-    },
     /**
      * 手动刷新列表数据，选项的默认值为: { loading: true }
      * @public
@@ -1049,82 +920,37 @@ export default {
     clearSelection() {
       return this.selectStrategy.clearSelection()
     },
-    // 弹窗相关
-    // 除非树形结构在操作列点击新增, 否则 row 是 MouseEvent
-    // onDefaultNew(row) {
-    //   this.row = row
-    //   this.$refs.dialog.show(dialogModes.new)
-    // },
-    // onDefaultView(row) {
-    //   this.row = row
-    //   this.$refs.dialog.show(dialogModes.view, row)
-    // },
-    // onDefaultEdit(row) {
-    //   this.row = row
-    //   this.$refs.dialog.show(dialogModes.edit, row)
-    // },
-    // 显示弹框
-    async onShowFormDialog(buttonData) {
-      this.row = buttonData.rowData
-      const dialogTitle = buttonData.title || buttonData.text
-      const { dialogForm, dialogAttrs } = buttonData
-
-      this.$refs.dialog.show(buttonData, dialogTitle, this._.cloneDeep(dialogAttrs))
-
-      let dialogFormData = {}
-      if (buttonData.getUrl) {
-        this.$refs.dialog.showDialogLoading()
-        dialogFormData = await this.getInfo(buttonData)
-        this.$refs.dialog.showForm(this._.cloneDeep(dialogForm), this._.cloneDeep(dialogFormData))
-        this.$refs.dialog.closeDialogLoading()
-      } else {
-        this.$refs.dialog.showForm(this._.cloneDeep(dialogForm), this._.cloneDeep(dialogFormData))
-      }
-
-      // console.log('onShowFormDialog', buttonData, dialogTitle, deepClone(dialogForm), dialogFormData, dialogAttrs)
-      // return
-      // this.$refs.dialog.show(buttonData, dialogTitle, this._.cloneDeep(dialogForm), this._.cloneDeep(dialogFormData), this._.cloneDeep(dialogAttrs))
-    },
-    // 获取请求信息
-    getInfo(buttonData) {
-      const { getUrl } = buttonData
-      const submitData = this.getRequestParams({}, buttonData.params)
-      return new Promise((resolve, reject) => {
-        request({
-          method: 'post',
-          url: getUrl,
-          data: submitData
-        }).then(raw => {
-          // console.log('getInfo', raw)
-          // this.onSuccess(raw.message, raw.data)
-          resolve(raw.data)
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
     // 获取功能按钮请求参数
-    getRequestParams(formData, params) {
-      if (this.selected.length > 0) {
-        formData[this.id] = this.selected
+    getRequestParams() {
+      return (buttonData, formData) => {
+        // console.log('getRequestParams', this)
+        const submitData = {}
+        submitData.tableParams = this.getListParams()
+        Object.assign(submitData, buttonData.params)
+
+        this.row = buttonData.rowData
+        if (this.selected.length > 0) {
+          formData[this.id] = this.selected
+        }
+        if (this._.has(this.row, this.id)) {
+          formData[this.id] = this.row[this.id]
+        }
+        submitData.formData = formData
+
+        if (this._.has(this.row, this.columnParams)) {
+          Object.assign(submitData, this.row[this.columnParams])
+        }
+
+        return submitData
       }
-      if (this._.has(this.row, this.id)) {
-        formData[this.id] = this.row[this.id]
-      }
-      const submitData = {
-        'tableParams': this.getListParams(),
-        ...params,
-        formData
-      }
-      return submitData
     },
     // 处理确认请求
     async onConfirm(buttonData, formData, done) {
       this.row = buttonData.rowData
       const { submitUrl } = buttonData
-      const submitData = this.getRequestParams(formData, buttonData.params)
+      const submitData = this.getRequestParams()(buttonData, formData)
 
-      console.log('onConfirm', submitData, buttonData)
+      // console.log('onConfirm', submitData, buttonData)
 
       try {
         await this.beforeConfirm(buttonData)
@@ -1227,7 +1053,15 @@ export default {
 .el-data-table {
   $color-blue: #2196f3;
   $space-width: 18px;
-
+  .table-header-button-container{
+    .table-header-button-item{
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    .table-header-button-item+.table-header-button-item {
+      margin-left: 10px;
+    }
+  }
   .ms-tree-space {
     position: relative;
     top: 1px;

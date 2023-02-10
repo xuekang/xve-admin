@@ -1,5 +1,5 @@
 <template>
-  <div v-if="formConf.fields.length > 0" class="form-container">
+  <div v-if="formConf.fields && formConf.fields.length > 0" class="form-container">
     <form-render :form-conf="formConf" @submit="sumbitForm" />
   </div>
 </template>
@@ -35,18 +35,19 @@ export default {
         formBtns: true,
         unFocusedComponentBorder: false
       },
-      formConf: {
+      formConf: {},
+      formConf11: {
         'fields': [{
           '__config__': {
-            'label': '单行文本',
+            'label': '单行文本1',
             'labelWidth': null,
             'showLabel': true,
             'changeTag': true,
             'tag': 'el-input',
             'tagIcon': 'input',
-            'required': false,
+            'required': true,
             'layout': 'colFormItem',
-            'span': 6,
+            'span': 24,
             'document': 'https://element.eleme.cn/#/zh-CN/component/input',
             'regList': [],
             'formId': 112,
@@ -70,7 +71,7 @@ export default {
           '__vModel__': 'field112'
         }, {
           '__config__': {
-            'label': '单行文本',
+            'label': '单行文本2',
             'labelWidth': null,
             'showLabel': true,
             'changeTag': true,
@@ -78,7 +79,7 @@ export default {
             'tagIcon': 'input',
             'required': false,
             'layout': 'colFormItem',
-            'span': 6,
+            'span': 24,
             'document': 'https://element.eleme.cn/#/zh-CN/component/input',
             'regList': [],
             'formId': 113,
@@ -102,7 +103,7 @@ export default {
           '__vModel__': 'field113'
         }, {
           '__config__': {
-            'label': '单行文本',
+            'label': '单行文本3',
             'labelWidth': null,
             'showLabel': true,
             'changeTag': true,
@@ -110,7 +111,7 @@ export default {
             'tagIcon': 'input',
             'required': false,
             'layout': 'colFormItem',
-            'span': 6,
+            'span': 24,
             'document': 'https://element.eleme.cn/#/zh-CN/component/input',
             'regList': [],
             'formId': 114,
@@ -231,6 +232,51 @@ export default {
         'gutter': 15,
         'disabled': false,
         'formBtns': false
+      },
+      formConf22: {
+        'fields': [{
+          '__config__': {
+            'label': '单行文本1',
+            'labelWidth': null,
+            'showLabel': true,
+            'changeTag': true,
+            'tag': 'el-input',
+            'tagIcon': 'input',
+            'required': true,
+            'layout': 'colFormItem',
+            'span': 24,
+            'document': 'https://element.eleme.cn/#/zh-CN/component/input',
+            'regList': [],
+            'formId': 112,
+            'renderKey': 1675306901087
+          },
+          '__slot__': {
+            'prepend': '',
+            'append': ''
+          },
+          'placeholder': '请输入单行文本',
+          'style': {
+            'width': '100%'
+          },
+          'clearable': true,
+          'prefix-icon': '',
+          'suffix-icon': '',
+          'maxlength': null,
+          'show-word-limit': false,
+          'readonly': false,
+          'disabled': false,
+          '__vModel__': 'field112'
+        }],
+        'formRef': 'elForm',
+        'formModel': 'formData',
+        'size': 'small',
+        'labelPosition': 'right',
+        'labelWidth': 100,
+        'formRules': 'rules',
+        'span': 6,
+        'gutter': 15,
+        'disabled': false,
+        'formBtns': true
       }
 
     }
@@ -238,7 +284,10 @@ export default {
   computed: {},
   watch: {},
   created() {
-    // this.getFormConf()
+    const myQuery = this.$route.query
+    console.log('myQUery', myQuery, this)
+
+    this.getFormConf()
     // console.log(JSON.stringify(this.formConf.fields[0].__config__.regList));
   },
   mounted() {
@@ -247,8 +296,9 @@ export default {
   methods: {
     getFormConf() {
       getFormConf().then(res => {
+        this.formConf = this._.cloneDeep(this.formConf22)
         console.log('表单配置', res.data)
-        this.formConf = { ...this.formConf, ...res.data }
+        // this.formConf = { ...this.formConf, ...res.data }
       })
     },
     getFormData() {

@@ -17,7 +17,7 @@ export default {
       style: {
         border: 'none',
         background: 'inherit',
-        padding: '9px 0',
+        padding: '5px 5px',
         color: '',
         pointerEvents: ''
       }

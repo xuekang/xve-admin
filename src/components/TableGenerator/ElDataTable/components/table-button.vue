@@ -1,24 +1,48 @@
 <template>
-  <component
-    :is="isText ? 'text-button' : 'el-button'"
-    :size="buttonSize"
-    v-bind="$attrs"
-    :loading="loading"
-    :type="type"
-    v-on="$listeners"
-    @click.stop="handleClick"
-  >
-    <slot />
-  </component>
+  <div style="display:inline-block;">
+    <component
+      :is="isText ? 'text-button' : 'el-button'"
+      :size="buttonSize"
+      v-bind="$attrs"
+      :loading="loading"
+      :type="type"
+      v-on="$listeners"
+      @click.stop="handleClick"
+    >
+      <slot />
+    </component>
+    <div style="display:inline-block;">
+      <the-dialog
+        ref="dialog"
+        :render-key="_.uniqueId(renderKey)"
+        :button-size="buttonSize"
+        :dialog-form="dialogForm"
+        v-bind="dialogAttrs"
+        @onConfirm="onConfirm"
+      />
+    </div>
+  </div>
 </template>
 
 <script>
 import TextButton from './text-button.vue'
-import { deepClone } from '@/utils'
+import TheDialog from './the-dialog.vue'
+import request from '@/utils/request'
+import Promise from 'lie'
 
 export default {
-  components: { TextButton },
+  components: {
+    TextButton,
+    TheDialog
+  },
   props: {
+    /**
+     * 渲染key
+     */
+    renderKey: {
+      type: String,
+      default: ''
+    },
     /**
      * 是否是文字按钮。
      */
@@ -69,32 +93,6 @@ export default {
       default: ''
     },
     /**
-     * MessageBox 消息正文内容
-     */
-    msgboxMessage: {
-      type: String,
-      default: ''
-    },
-    /**
-     * 弹框属性
-     * 文档：https://element.eleme.cn/#/zh-CN/component/message-box
-     */
-    msgboxOptions: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
-    /**
-     * 按钮配置参数
-     */
-    params: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
-    /**
      * 数据提交地址
      */
     submitUrl: {
@@ -109,9 +107,42 @@ export default {
       default: ''
     },
     /**
+     * 按钮配置参数
+     */
+    params: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    /**
      * 当前行数据
      */
     rowData: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    /**
+     * 获取请求参数
+     */
+    getRequestParams: {
+      type: Function,
+      required: true
+    },
+    /**
+     * MessageBox 消息正文内容
+     */
+    msgboxMessage: {
+      type: String,
+      default: ''
+    },
+    /**
+     * 弹框属性
+     * 文档：https://element.eleme.cn/#/zh-CN/component/message-box
+     */
+    msgboxAttrs: {
       type: Object,
       default() {
         return {}
@@ -136,6 +167,13 @@ export default {
       }
     },
     /**
+     * 新页面地址
+     */
+    newPagePath: {
+      type: String,
+      default: ''
+    },
+    /**
      * 点击按钮绑定的函数
      */
     click: {
@@ -145,16 +183,7 @@ export default {
   },
   data() {
     return {
-      loading: false,
-      buttonActionMode: {
-        'confirm': {
-          'method': () => { return this.showConfirmDialog }
-        },
-        'formDialog': {
-          'method': () => { return this.showFormDialog }
-        }
-      }
-
+      loading: false
     }
   },
   methods: {
@@ -165,11 +194,10 @@ export default {
         this_props[key] = this[key]
       }
       // console.log('测试按钮', this, this_props)
-
       if (this.click) {
         // 自定义按钮
         this.loading = true
-        Promise.resolve(this.click(this.params))
+        Promise.resolve(this.click(this_props))
           .then(flag => {
             if (flag === false) return
             // 调用父组件中的数据刷新方法
@@ -181,22 +209,22 @@ export default {
           })
       } else {
         // 处理按钮动作模式
-        this.buttonActionMode[this.actionType].method()(this_props)
+        this[this.actionType](this_props)
       }
     },
     /**
-     * 确认弹框，流程如下：
+     * 普通确认弹框，流程如下：
      * 1. 弹出确认弹窗
-     * 2. 有请求地址则执行请求，过程中确认按钮保持 loading；
+     * 2. 点击弹框确认后，有数据提交地址则执行请求，过程中确认按钮保持 loading；
      * 3. 失败则报错误信息、弹窗不关闭；
      * 4. 成功则报成功信息、弹窗关闭、并校正页码（详见 correctPage）、重新请求列表数据；
      */
-    showConfirmDialog(data) {
+    showConfirm(data) {
       let options = {
-        'closeOnClickModal': false
+        // 'closeOnClickModal': false
       }
-      const { msgboxMessage, msgboxOptions } = data
-      options = Object.assign(options, msgboxOptions)
+      const { msgboxMessage, msgboxAttrs } = data
+      options = Object.assign(options, msgboxAttrs)
       const title = this.title || options.title || '提示'
       options.type = options.type || ''
       // console.log(data, message, title, options)
@@ -205,17 +233,12 @@ export default {
         if (action !== 'confirm') return done()
 
         instance.confirmButtonLoading = true
-
-        try {
-          this.$emit('onConfirm', data, done)
-        } catch (error) {
-          console.log(error)
-          // 出错则不关闭dialog
-          // done()
-          throw error
-        } finally {
+        console.log(instance)
+        const confirmDone = (close = true) => {
           instance.confirmButtonLoading = false
+          if (close) done()
         }
+        this.$emit('onConfirm', data, {}, confirmDone)
       }
 
       return this.$confirm(msgboxMessage, title, options).catch(() => {
@@ -225,12 +248,58 @@ export default {
     /**
      * 表单弹框，流程如下：
      * 1. 弹出确认弹窗
-     * 2. 有请求地址则执行请求，过程中确认按钮保持 loading；
-     * 3. 失败则报错误信息、弹窗不关闭；
-     * 4. 成功则报成功信息、弹窗关闭、并校正页码（详见 correctPage）、重新请求列表数据；
+     * 2. 有数据获取地址则执行请求，过程中弹框页面保持 loading；
+     * 3. 点击弹框确认后，有数据提交地址则执行请求，过程中确认按钮保持 loading；
+     * 4. 失败则报错误信息、弹窗不关闭；
+     * 5. 成功则报成功信息、弹窗关闭、并校正页码（详见 correctPage）、重新请求列表数据；
      */
-    showFormDialog(data) {
-      this.$emit('onShowFormDialog', data)
+    async showFormDialog(buttonData) {
+      const dialogTitle = this.title || this.text
+      this.$refs.dialog.show(buttonData, dialogTitle)
+
+      // console.log('showFormDialog', buttonData)
+      let dialogFormData = {}
+      if (this.getUrl) {
+        this.$refs.dialog.showDialogLoading()
+        dialogFormData = await this.getInfo(buttonData)
+        this.$refs.dialog.closeDialogLoading()
+      }
+      this.$refs.dialog.showForm(this._.cloneDeep(dialogFormData))
+
+      // console.log('onShowFormDialog', buttonData, dialogTitle, deepClone(dialogForm), dialogFormData, dialogAttrs)
+    },
+    // 获取请求信息
+    getInfo(buttonData) {
+      const submitData = this.getRequestParams()(buttonData, {})
+      return new Promise((resolve, reject) => {
+        request({
+          method: 'post',
+          url: this.getUrl,
+          data: submitData
+        }).then(raw => {
+          // console.log('getInfo', raw)
+          // this.onSuccess(raw.message, raw.data)
+          resolve(raw.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // 跳转到新标签页面
+    showNewPage(buttonData) {
+      if (!this.newPagePath) {
+        this.$showErr('按钮配置错误：无新页面地址')
+      }
+      // const newPageTitle = this.title || this.text
+      const query = this.getRequestParams()(buttonData, {})
+      this.$router.push({
+        path: this.newPagePath,
+        query: query
+      })
+    },
+    // 确认
+    onConfirm(buttonData, formData, done) {
+      this.$emit('onConfirm', buttonData, formData, done)
     }
 
   }

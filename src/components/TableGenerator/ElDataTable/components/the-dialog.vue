@@ -3,14 +3,14 @@
     ref="dialog"
     :title="dialogTitle"
     :visible.sync="visible"
-    :modal-append-to-body="false"
-    custom-class="xve-table-form-dialog"
+    :append-to-body="false"
+    :custom-class="customClass"
     v-bind="dialogAttrs"
     @close="resetFields"
   >
 
-    <div v-if="formConf.fields.length > 0" class="form-container">
-      <form-render :form-conf="formConf" @submit="confirm" @reset="resetFields" />
+    <div v-if="formConf.fields && formConf.fields.length > 0" class="form-container">
+      <form-render :key="formKey" :form-conf="formConf" @submit="confirm" @reset="resetFields" />
     </div>
 
     <!-- <div v-show="hasFooter" slot="footer">
@@ -35,48 +35,84 @@ export default {
     FormRender
   },
   props: {
-    // title: {
-    //   type: String,
-    //   default: ''
-    // },
-    // /**
-    //  * 表单弹框数据
-    //  */
-    // dialogForm: {
-    //   type: Array,
-    //   default() {
-    //     return []
-    //   }
-    // },
-    // dialogAttrs: {
-    //   type: Object,
-    //   default() {
-    //     return {}
-    //   }
-    // },
+    // 渲染key
+    renderKey: {
+      type: String,
+      default: ''
+    },
+    // 按钮尺寸
     buttonSize: {
       type: String,
       default: 'small'
     },
+    // 按钮尺寸
+    dialogForm: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
     /**
-     * 点击事件的回调函数
+     * 对话框属性设置, 详情配置参考element-ui官网
+     * @link https://element.eleme.cn/2.4/#/zh-CN/component/dialog#attributes
      */
-    callback: {
-      type: Function,
-      default: () => {}
+    dialogAttrs: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
-
   },
   data() {
     return {
       buttonData: {},
       dialogTitle: '',
-      dialogAttrs: {},
       visible: false,
       dialogLoading: null,
       buttonLoading: false,
       slotData: null,
-      formConf: {
+      formKey: +new Date(),
+      formConf1: {
+        'fields': [{
+          '__config__': {
+            'label': '单行文本1',
+            'labelWidth': null,
+            'showLabel': true,
+            'changeTag': true,
+            'tag': 'el-input',
+            'tagIcon': 'input',
+            'required': true,
+            'layout': 'colFormItem',
+            'span': 24,
+            'document': 'https://element.eleme.cn/#/zh-CN/component/input',
+            'regList': [],
+            'formId': 112,
+            'renderKey': 1675306901087
+          },
+          '__slot__': {
+            'prepend': '',
+            'append': ''
+          },
+          'placeholder': '请输入单行文本1',
+          'style': {
+            'width': '100%'
+          },
+          'clearable': true,
+          '__vModel__': 'field112'
+        }],
+        'formRef': 'elForm',
+        'formModel': 'formData',
+        'size': 'small',
+        'labelPosition': 'right',
+        'labelWidth': 100,
+        'formRules': 'rules',
+        'span': 6,
+        'gutter': 15,
+        'disabled': false,
+        'formBtns': true
+      },
+      formConf: {},
+      formConfCopy: {
         'fields': [],
         'formRef': 'elForm',
         'formModel': 'formData',
@@ -93,6 +129,9 @@ export default {
     }
   },
   computed: {
+    customClass() {
+      return `xve-table-form-dialog-${this.renderKey}`
+    },
     hasFooter() {
       return this.formConf.fields.length > 1
     }
@@ -100,40 +139,45 @@ export default {
   watch: {
 
   },
+  created() {
+
+  },
   methods: {
     /**
      * 显示dialog
      * @public
      */
-    show(buttonData, dialogTitle, dialogAttrs) {
+    show(buttonData, dialogTitle) {
       this.buttonData = buttonData
       this.dialogTitle = dialogTitle
-      this.dialogAttrs = dialogAttrs
-      this.formConf.fields = []
-      // $nextTick 有时也拿不到 form ，这样是稳妥的做法
-      // this.$refs.dialog.$once('opened', () => {
-      //   this.formConf.fields.unshift(...dialogForm)
-      //   // this.$refs.form.updateForm(formValue)
-      //   // this.slotData = formValue
-      // })
       this.visible = true
     },
+    // 开启加载动画
     showDialogLoading() {
-      this.$refs.dialog.$once('opened', () => {
+      this.$refs.dialog.$once('opened', async() => {
         this.loading = this.$loading({
-          target: '.xve-table-form-dialog .el-dialog__body'
+          target: `body > .el-dialog__wrapper .${this.customClass} .el-dialog__body`
         })
       })
     },
+    // 关闭加载动画
     closeDialogLoading() {
-      this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
+      // 以服务的方式调用的 Loading 需要异步关闭
+      this.$nextTick(() => {
         this.loading.close()
       })
     },
-    showForm(dialogForm, dialogFormData) {
-      dialogForm = this.fillFormData(dialogForm, dialogFormData)
-      console.log('showForm', dialogForm, dialogFormData)
-      this.formConf.fields.unshift(...dialogForm)
+    // 显示表单
+    showForm(dialogFormData) {
+      const formConfCopy = this._.cloneDeep(this.formConfCopy)
+      const dialogForm = this._.cloneDeep(this.dialogForm)
+      this.formKey = +new Date()
+      formConfCopy.fields.unshift(...dialogForm)
+      this.fillFormData(formConfCopy.fields, dialogFormData)
+
+      // const formConf1 = this.formConf1
+      // console.log('showForm', this._.cloneDeep(formConfCopy), this._.cloneDeep(this.formConf1))
+      this.formConf = this._.cloneDeep(formConfCopy)
     },
     // 填充表单数据
     fillFormData(form, data) {
