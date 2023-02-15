@@ -2,24 +2,37 @@ import store from '@/store'
 
 function checkPermission(el, binding) {
   const { value } = binding
-  const roles = store.getters && store.getters.roles
+  const auth = store.getters && store.getters.auth
 
-  if (value && value instanceof Array) {
-    if (value.length > 0) {
-      const permissionRoles = value
+  if (auth.button) {
+    const hasPermission = auth.button.length > 0 && auth.button.includes(value)
 
-      const hasPermission = roles.some(role => {
-        return permissionRoles.includes(role)
-      })
-
-      if (!hasPermission) {
-        el.parentNode && el.parentNode.removeChild(el)
-      }
+    if (!hasPermission) {
+      el.parentNode && el.parentNode.removeChild(el)
     }
-  } else {
-    throw new Error(`need roles! Like v-permission="['admin','editor']"`)
   }
 }
+
+// function checkPermission(el, binding) {
+//   const { value } = binding
+//   const roles = store.getters && store.getters.roles
+
+//   if (value && value instanceof Array) {
+//     if (value.length > 0) {
+//       const permissionRoles = value
+
+//       const hasPermission = roles.some(role => {
+//         return permissionRoles.includes(role)
+//       })
+
+//       if (!hasPermission) {
+//         el.parentNode && el.parentNode.removeChild(el)
+//       }
+//     }
+//   } else {
+//     throw new Error(`need roles! Like v-permission="['admin','editor']"`)
+//   }
+// }
 
 export default {
   inserted(el, binding) {

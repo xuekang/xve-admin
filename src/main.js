@@ -27,6 +27,10 @@ Vue.prototype._ = _
 import axios from 'axios'
 Vue.prototype.$axios = axios
 
+// 注册全局指令
+import Directive from './directive'
+Vue.use(Directive)
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -41,7 +45,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 Vue.use(Element, {
-  size: Cookies.get('size') || 'medium' // set element-ui default size
+  size: Cookies.get('size') || 'small' // set element-ui default size
 })
 
 // register global utility filters

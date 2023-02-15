@@ -1,6 +1,11 @@
 <template>
-  <div v-if="formConf.fields && formConf.fields.length > 0" class="form-container">
-    <form-render :form-conf="formConf" @submit="sumbitForm" />
+  <div>
+    <div v-if="formConf.fields && formConf.fields.length > 0" class="form-container">
+      <form-render :form-conf="formConf" @submit="sumbitForm" />
+    </div>
+    <el-button v-permission="'TestTableNewPage'" type="primary">
+      测试按钮
+    </el-button>
   </div>
 </template>
 

@@ -17,6 +17,7 @@
         <template v-for="(btn) in headerButtons">
           <div v-if="'show' in btn ? btn.show(selected) : true" :key="btn.renderKey" class="table-header-button-item">
             <table-button
+              v-permission="btn.auth_route_name"
               :is-text="btn.isText === undefined ? false : btn.isText"
               :button-size="buttonSize"
               :disabled="'disabled' in btn ? btn.disabled(selected) : false"
@@ -155,6 +156,7 @@
               <table-button
                 v-if="'show' in btn ? btn.show(scope.row) : true"
                 :key="_.uniqueId(btn.renderKey)"
+                v-permission="btn.auth_route_name"
                 :is-text="btn.isText === undefined ? true : btn.isText"
                 v-bind="btn"
                 :click="btn.atClick"
