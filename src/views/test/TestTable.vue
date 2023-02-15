@@ -9,6 +9,7 @@ import TableGenerator from '@/components/TableGenerator/ElDataTable'
 import { getTableConf } from '@/api/table-form-generator'
 
 export default {
+  name: 'TestTable',
   components: {
     TableGenerator
   },
@@ -25,7 +26,7 @@ export default {
 
   },
   created() {
-    // console.log(this._.uniqueId())
+    console.log(this.$route)
     this.getTableConf()
   },
   mounted() {

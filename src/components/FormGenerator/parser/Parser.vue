@@ -158,7 +158,7 @@ export default {
             config.regList.push(required)
           }
           rules[cur.__vModel__] = config.regList.map(item => {
-            item.pattern && (item.pattern = global.eval(item.pattern))
+            item.pattern && (item.pattern = window.eval(item.pattern))
             item.trigger = ruleTrigger && ruleTrigger[config.tag]
             return item
           })

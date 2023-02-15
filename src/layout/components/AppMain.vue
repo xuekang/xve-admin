@@ -1,6 +1,6 @@
 <template>
   <section class="app-main">
-    <transition name="fade-transform" mode="out-in">
+    <transition :name="pageTransitionAnimationName" :mode="pageTransitionAnimationName">
       <keep-alive :include="cachedViews">
         <router-view :key="key" />
       </keep-alive>
@@ -9,8 +9,15 @@
 </template>
 
 <script>
+import defaultSettings from '@/settings'
 export default {
   name: 'AppMain',
+  data() {
+    return {
+      pageTransitionAnimationName: this._.get(defaultSettings, 'pageTransitionAnimation.name', ''),
+      pageTransitionAnimationMode: this._.get(defaultSettings, 'pageTransitionAnimation.mode', '')
+    }
+  },
   computed: {
     cachedViews() {
       return this.$store.state.tagsView.cachedViews

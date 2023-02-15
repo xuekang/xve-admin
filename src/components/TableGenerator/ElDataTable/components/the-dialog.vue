@@ -3,7 +3,7 @@
     ref="dialog"
     :title="dialogTitle"
     :visible.sync="visible"
-    :append-to-body="false"
+    :append-to-body="true"
     :custom-class="customClass"
     v-bind="dialogAttrs"
     @close="resetFields"

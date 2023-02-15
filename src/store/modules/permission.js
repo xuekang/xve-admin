@@ -1,5 +1,5 @@
-import { asyncRoutes, constantRoutes } from '@/router'
-
+import { localRoutes, constantRoutes } from '@/router'
+import Layout from '@/layout'
 /**
  * Use meta.role to determine if the current user has permission
  * @param roles
@@ -34,6 +34,32 @@ export function filterAsyncRoutes(routes, roles) {
   return res
 }
 
+/**
+ * format asynchronous routing tables by recursion
+ * @param routes asyncRoutes
+ * @param roles
+ */
+export function formatAsyncRoutes(accessedRoutes) {
+  const res = []
+  // console.log('formatAsyncRoutes --------------------', res)
+  accessedRoutes.forEach(route => {
+    const tmp = { ...route }
+    // console.log('formatAsyncRoutes tmp.component', tmp.component)
+    if (tmp.component) {
+      tmp.component = window.eval(tmp.component)
+    } else {
+      tmp.component = localRoutes[tmp.name]
+    }
+    if (tmp.children) {
+      tmp.children = formatAsyncRoutes(tmp.children)
+    }
+    res.push(tmp)
+  })
+  // console.log('000000000000001111', res)
+
+  return res
+}
+
 const state = {
   routes: [],
   addRoutes: []
@@ -47,14 +73,12 @@ const mutations = {
 }
 
 const actions = {
-  generateRoutes({ commit }, roles) {
+  generateRoutes({ commit }, asyncRoutes) {
     return new Promise(resolve => {
-      let accessedRoutes
-      if (roles.includes('admin')) {
-        accessedRoutes = asyncRoutes || []
-      } else {
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      }
+      window.$Layout = Layout
+      const accessedRoutes = formatAsyncRoutes(asyncRoutes)
+      accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
+      // console.log('accessedRoutes', accessedRoutes)
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })

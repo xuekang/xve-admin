@@ -94,7 +94,7 @@ function stringify(obj) {
 function parse(str) {
   JSON.parse(str, (k, v) => {
     if (v.indexOf && v.indexOf('function') > -1) {
-      return eval(`(${v})`)
+      return window.eval(`(${v})`)
     }
     return v
   })
