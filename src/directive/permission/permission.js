@@ -4,7 +4,7 @@ function checkPermission(el, binding) {
   const { value } = binding
   const auth = store.getters && store.getters.auth
 
-  if (auth.button) {
+  if (auth && auth.button !== null) {
     const hasPermission = auth.button.length > 0 && auth.button.includes(value)
 
     if (!hasPermission) {

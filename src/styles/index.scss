@@ -189,3 +189,13 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
+
+.router-tab__container{
+  height: calc(100vh - 90px);
+  width: 100%;
+  flex: none;
+  -webkit-box-flex:none;
+}
+.router-tab__container .router-alive{
+  height:auto;
+}

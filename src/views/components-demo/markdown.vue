@@ -1,12 +1,17 @@
 <template>
   <div class="components-container">
-    <aside>Markdown is based on
-      <a href="https://github.com/nhnent/tui.editor" target="_blank">tui.editor</a> ，simply wrapped with Vue.
+    <aside>
+      Markdown is based on
+      <a href="https://github.com/nhnent/tui.editor" target="_blank"
+        >tui.editor</a
+      >
+      ，simply wrapped with Vue.
       <a
         target="_blank"
         href="https://panjiachen.github.io/vue-element-admin-site/feature/component/markdown-editor.html"
       >
-        Documentation </a>
+        Documentation
+      </a>
     </aside>
 
     <div class="editor-container">
@@ -20,14 +25,22 @@
       <el-tag class="tag-title">
         Markdown Mode:
       </el-tag>
-      <markdown-editor ref="markdownEditor" v-model="content2" :options="{hideModeSwitch:true,previewStyle:'tab'}" height="200px" />
+      <markdown-editor
+        ref="markdownEditor"
+        v-model="content2"
+        :options="{ hideModeSwitch: true, previewStyle: 'tab' }"
+        height="200px"
+      />
     </div>
 
     <div class="editor-container">
       <el-tag class="tag-title">
         Customize Toolbar:
       </el-tag>
-      <markdown-editor v-model="content3" :options="{ toolbarItems: ['heading','bold','italic']}" />
+      <markdown-editor
+        v-model="content3"
+        :options="{ toolbarItems: ['heading', 'bold', 'italic'] }"
+      />
     </div>
 
     <div class="editor-container">
@@ -39,10 +52,20 @@
         title="You can change the language of the admin system to see the effect"
         type="success"
       />
-      <markdown-editor ref="markdownEditor" v-model="content4" :language="language" height="300px" />
+      <markdown-editor
+        ref="markdownEditor"
+        v-model="content4"
+        :language="language"
+        height="300px"
+      />
     </div>
 
-    <el-button style="margin-top:80px;" type="primary" icon="el-icon-document" @click="getHtml">
+    <el-button
+      style="margin-top:80px;"
+      type="primary"
+      icon="el-icon-document"
+      @click="getHtml"
+    >
       Get HTML
     </el-button>
     <div v-html="html" />
@@ -71,9 +94,9 @@ export default {
       content4: content,
       html: '',
       languageTypeList: {
-        'en': 'en_US',
-        'zh': 'zh_CN',
-        'es': 'es_ES'
+        en: 'en_US',
+        zh: 'zh_CN',
+        es: 'es_ES'
       }
     }
   },
@@ -92,10 +115,10 @@ export default {
 </script>
 
 <style scoped>
-.editor-container{
+.editor-container {
   margin-bottom: 30px;
 }
-.tag-title{
+.tag-title {
   margin-bottom: 5px;
 }
 </style>

@@ -10,7 +10,7 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
-router.beforeEach(async(to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // start progress bar
   NProgress.start()
 
@@ -38,18 +38,25 @@ router.beforeEach(async(to, from, next) => {
           const { auth } = await store.dispatch('user/getInfo')
 
           // generate accessible routes map based on roles
-          const accessRoutes = await store.dispatch('permission/generateRoutes', auth.menu)
+          const accessRoutes = await store.dispatch(
+            'permission/generateRoutes',
+            auth.menu
+          )
           // console.log('accessRoutes', accessRoutes)
           // dynamically add accessible routes
-          router.addRoutes(accessRoutes)
+          // router.addRoute(accessRoutes)
+          accessRoutes.forEach(accessRoute => {
+            router.addRoute(accessRoute)
+          })
 
-          // hack method to ensure that addRoutes is complete
+          // hack method to ensure that addRoute is complete
           // set the replace: true, so the navigation will not leave a history record
           next({ ...to, replace: true })
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
-          Message.error(error || 'Has Error')
+          console.log('router permission', error)
+          Message.error('router permission error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
         }

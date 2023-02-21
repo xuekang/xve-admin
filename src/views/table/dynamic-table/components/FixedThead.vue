@@ -14,7 +14,14 @@
       </el-checkbox-group>
     </div>
 
-    <el-table :key="key" :data="tableData" border fit highlight-current-row style="width: 100%">
+    <el-table
+      :key="key"
+      :data="tableData"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%"
+    >
       <el-table-column prop="name" label="fruitName" width="180" />
       <el-table-column v-for="fruit in formThead" :key="fruit" :label="fruit">
         <template slot-scope="scope">
@@ -54,9 +61,8 @@ export default {
   watch: {
     checkboxVal(valArr) {
       this.formThead = this.formTheadOptions.filter(i => valArr.indexOf(i) >= 0)
-      this.key = this.key + 1// 为了保证table 每次都会重渲 In order to ensure the table will be re-rendered each time
+      this.key = this.key + 1 // 为了保证table 每次都会重渲 In order to ensure the table will be re-rendered each time
     }
   }
 }
 </script>
-

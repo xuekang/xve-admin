@@ -21,4 +21,3 @@ export default {
   components: { FixedThead, UnfixedThead }
 }
 </script>
-

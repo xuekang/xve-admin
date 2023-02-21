@@ -9,7 +9,7 @@ import TableGenerator from '@/components/TableGenerator/ElDataTable'
 import { getTableConf } from '@/api/table-form-generator'
 
 export default {
-  name: 'TestTable',
+  name: 'TableIndex',
   components: {
     TableGenerator
   },
@@ -38,22 +38,6 @@ export default {
         this.tableConf = { ...this.tableConf, ...res.data }
       })
       this.loading = false
-    },
-    testPage() {
-      this.$router.replace({
-        path: '/test/index',
-        query: {
-          auth_code: 'test'
-        }
-      })
-      console.log(11)
-
-      this.$router.push({
-        path: '/test/index',
-        query: {
-          auth_code: 'test'
-        }
-      })
     }
   }
 }

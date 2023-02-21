@@ -1,16 +1,25 @@
 <template>
   <el-dialog
     ref="dialog"
-    :title="dialogTitle"
     :visible.sync="visible"
+    :title="dialogTitle"
+    :modal-append-to-body="false"
     :append-to-body="true"
+    :lock-scroll="false"
     :custom-class="customClass"
     v-bind="dialogAttrs"
     @close="resetFields"
   >
-
-    <div v-if="formConf.fields && formConf.fields.length > 0" class="form-container">
-      <form-render :key="formKey" :form-conf="formConf" @submit="confirm" @reset="resetFields" />
+    <div
+      v-if="formConf.fields && formConf.fields.length > 0"
+      class="form-container"
+    >
+      <form-render
+        :key="formKey"
+        :form-conf="formConf"
+        @submit="confirm"
+        @reset="resetFields"
+      />
     </div>
 
     <!-- <div v-show="hasFooter" slot="footer">
@@ -63,6 +72,7 @@ export default {
       }
     }
   },
+  inject: ['onConfirm'],
   data() {
     return {
       buttonData: {},
@@ -73,58 +83,60 @@ export default {
       slotData: null,
       formKey: +new Date(),
       formConf1: {
-        'fields': [{
-          '__config__': {
-            'label': '单行文本1',
-            'labelWidth': null,
-            'showLabel': true,
-            'changeTag': true,
-            'tag': 'el-input',
-            'tagIcon': 'input',
-            'required': true,
-            'layout': 'colFormItem',
-            'span': 24,
-            'document': 'https://element.eleme.cn/#/zh-CN/component/input',
-            'regList': [],
-            'formId': 112,
-            'renderKey': 1675306901087
-          },
-          '__slot__': {
-            'prepend': '',
-            'append': ''
-          },
-          'placeholder': '请输入单行文本1',
-          'style': {
-            'width': '100%'
-          },
-          'clearable': true,
-          '__vModel__': 'field112'
-        }],
-        'formRef': 'elForm',
-        'formModel': 'formData',
-        'size': 'small',
-        'labelPosition': 'right',
-        'labelWidth': 100,
-        'formRules': 'rules',
-        'span': 6,
-        'gutter': 15,
-        'disabled': false,
-        'formBtns': true
+        fields: [
+          {
+            __config__: {
+              label: '单行文本1',
+              labelWidth: null,
+              showLabel: true,
+              changeTag: true,
+              tag: 'el-input',
+              tagIcon: 'input',
+              required: true,
+              layout: 'colFormItem',
+              span: 24,
+              document: 'https://element.eleme.cn/#/zh-CN/component/input',
+              regList: [],
+              formId: 112,
+              renderKey: 1675306901087
+            },
+            __slot__: {
+              prepend: '',
+              append: ''
+            },
+            placeholder: '请输入单行文本1',
+            style: {
+              width: '100%'
+            },
+            clearable: true,
+            __vModel__: 'field112'
+          }
+        ],
+        formRef: 'elForm',
+        formModel: 'formData',
+        size: 'small',
+        labelPosition: 'right',
+        labelWidth: 100,
+        formRules: 'rules',
+        span: 6,
+        gutter: 15,
+        disabled: false,
+        formBtns: true
       },
       formConf: {},
       formConfCopy: {
-        'fields': [],
-        'formRef': 'elForm',
-        'formModel': 'formData',
-        'size': 'small',
-        'labelPosition': 'right',
-        'labelWidth': 100,
-        'formRules': 'rules',
-        'span': 6,
-        'gutter': 15,
-        'disabled': false,
-        'loading': false,
-        'formBtns': true
+        fields: [],
+        formRef: 'elForm',
+        formModel: 'formData',
+        size: 'small',
+        labelPosition: 'right',
+        labelWidth: 100,
+        formRules: 'rules',
+        span: 6,
+        gutter: 15,
+        disabled: false,
+        loading: false,
+        formBtns: true
       }
     }
   },
@@ -136,12 +148,8 @@ export default {
       return this.formConf.fields.length > 1
     }
   },
-  watch: {
-
-  },
-  created() {
-
-  },
+  watch: {},
+  created() {},
   methods: {
     /**
      * 显示dialog
@@ -154,7 +162,7 @@ export default {
     },
     // 开启加载动画
     showDialogLoading() {
-      this.$refs.dialog.$once('opened', async() => {
+      this.$refs.dialog.$once('opened', async () => {
         this.loading = this.$loading({
           target: `body > .el-dialog__wrapper .${this.customClass} .el-dialog__body`
         })
@@ -194,7 +202,7 @@ export default {
     // 确认
     confirm(formData) {
       formData = removeEmptyKeys(formData)
-      // console.log('confirm', formData)
+      console.log('confirm', formData)
       this.formConf.loading = true
       this.buttonLoading = true
       const done = (close = true) => {
@@ -202,13 +210,14 @@ export default {
         this.buttonLoading = false
         if (close) this.visible = false
       }
-      this.$emit('onConfirm', this.buttonData, formData, done)
+      this.onConfirm()(this.buttonData, formData, done)
+      // this.$emit('onconfirm', this.buttonData, formData, done)
     },
     // 重置
     resetFields() {
       // this.$refs.form.resetFields()
       // this.slotData = null
-      // console.log('resetFields')
+      console.log('resetFields')
     }
   }
 }

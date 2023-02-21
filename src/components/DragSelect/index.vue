@@ -1,5 +1,12 @@
 <template>
-  <el-select ref="dragSelect" v-model="selectVal" v-bind="$attrs" class="drag-select" multiple v-on="$listeners">
+  <el-select
+    ref="dragSelect"
+    v-model="selectVal"
+    v-bind="$attrs"
+    class="drag-select"
+    multiple
+    v-on="$listeners"
+  >
     <slot />
   </el-select>
 </template>
@@ -30,7 +37,9 @@ export default {
   },
   methods: {
     setSort() {
-      const el = this.$refs.dragSelect.$el.querySelectorAll('.el-select__tags > span')[0]
+      const el = this.$refs.dragSelect.$el.querySelectorAll(
+        '.el-select__tags > span'
+      )[0]
       this.sortable = Sortable.create(el, {
         ghostClass: 'sortable-ghost', // Class name for the drop placeholder,
         setData: function(dataTransfer) {
@@ -52,7 +61,7 @@ export default {
 .drag-select {
   ::v-deep {
     .sortable-ghost {
-      opacity: .8;
+      opacity: 0.8;
       color: #fff !important;
       background: #42b983 !important;
     }

@@ -14,17 +14,19 @@
 
       <el-row v-if="hasHeader" class="table-header-button-container">
         <!-- 自定义按钮 -->
-        <template v-for="(btn) in headerButtons">
-          <div v-if="'show' in btn ? btn.show(selected) : true" :key="btn.renderKey" class="table-header-button-item">
+        <template v-for="btn in headerButtons">
+          <div
+            v-if="'show' in btn ? btn.show(selected) : true"
+            :key="btn.renderKey"
+            class="table-header-button-item"
+          >
             <table-button
               v-permission="btn.auth_route_name"
               :is-text="btn.isText === undefined ? false : btn.isText"
               :button-size="buttonSize"
               :disabled="'disabled' in btn ? btn.disabled(selected) : false"
               :click="btn.atClick"
-              :get-request-params="getRequestParams"
               v-bind="btn"
-              @onConfirm="onConfirm"
             >
               {{
                 typeof btn.text === 'function' ? btn.text(selected) : btn.text
@@ -68,12 +70,12 @@
           <template v-if="hasSelect">
             <el-data-table-column
               key="selection-key"
-              v-bind="{align: columnsAlign, ...columns[0]}"
+              v-bind="{ align: columnsAlign, ...columns[0] }"
             />
 
             <el-data-table-column
               key="tree-ctrl"
-              v-bind="{align: columnsAlign, ...columns[1]}"
+              v-bind="{ align: columnsAlign, ...columns[1] }"
             >
               <template slot-scope="scope">
                 <span
@@ -97,7 +99,7 @@
             <el-data-table-column
               v-for="col in columns.filter((c, i) => i !== 0 && i !== 1)"
               :key="col.prop"
-              v-bind="{align: columnsAlign, ...col}"
+              v-bind="{ align: columnsAlign, ...col }"
             />
           </template>
 
@@ -106,7 +108,7 @@
             <!--展开这列, 丢失 el-data-table-column属性-->
             <el-data-table-column
               key="tree-ctrl"
-              v-bind="{align: columnsAlign, ...columns[0]}"
+              v-bind="{ align: columnsAlign, ...columns[0] }"
             >
               <template slot-scope="scope">
                 <span
@@ -131,7 +133,7 @@
             <el-data-table-column
               v-for="col in columns.filter((c, i) => i !== 0)"
               :key="col.prop"
-              v-bind="{align: columnsAlign, ...col}"
+              v-bind="{ align: columnsAlign, ...col }"
             />
           </template>
         </template>
@@ -141,7 +143,7 @@
           <el-data-table-column
             v-for="col in columns"
             :key="col.prop"
-            v-bind="{align: columnsAlign, ...col}"
+            v-bind="{ align: columnsAlign, ...col }"
           />
         </template>
 
@@ -149,10 +151,10 @@
         <el-data-table-column
           v-if="hasOperation"
           label="操作"
-          v-bind="{align: columnsAlign, ...operationAttrs}"
+          v-bind="{ align: columnsAlign, ...operationAttrs }"
         >
           <template slot-scope="scope">
-            <template v-for="(btn) in columnButtons">
+            <template v-for="btn in columnButtons">
               <table-button
                 v-if="'show' in btn ? btn.show(scope.row) : true"
                 :key="_.uniqueId(btn.renderKey)"
@@ -160,10 +162,8 @@
                 :is-text="btn.isText === undefined ? true : btn.isText"
                 v-bind="btn"
                 :click="btn.atClick"
-                :get-request-params="getRequestParams"
                 :row-data="scope.row"
                 :disabled="'disabled' in btn ? btn.disabled(scope.row) : false"
-                @onConfirm="onConfirm"
               >
                 {{
                   typeof btn.text === 'function'
@@ -219,7 +219,6 @@ export default {
     TableButton,
     ElDataTableColumn
   },
-
   props: {
     /**
      * 表格数据请求url, 如果为空, 则不会发送请求; 改变url, 则table会重新发送请求
@@ -407,7 +406,7 @@ export default {
      */
     onSuccess: {
       type: Function,
-      default(msg, data) {
+      default(msg) {
         return this.$message.success(msg || '操作成功')
       }
     },
@@ -598,6 +597,12 @@ export default {
       }
     }
   },
+  provide() {
+    return {
+      onConfirm: this.onConfirm,
+      getRequestParams: this.getRequestParams
+    }
+  },
   data() {
     return {
       data: [],
@@ -758,7 +763,8 @@ export default {
           this.showNoData =
             this.$slots['no-data'] &&
             this.total === 0 &&
-            (this._.isEmpty(formValue) || this._.values(formValue).every(isFalse))
+            (this._.isEmpty(formValue) ||
+              this._.values(formValue).every(isFalse))
 
           this.loading = false
 
@@ -947,29 +953,30 @@ export default {
       }
     },
     // 处理确认请求
-    async onConfirm(buttonData, formData, done) {
-      this.row = buttonData.rowData
-      const { submitUrl } = buttonData
-      const submitData = this.getRequestParams()(buttonData, formData)
+    onConfirm() {
+      return async (buttonData, formData, done) => {
+        this.row = buttonData.rowData
+        const { submitUrl } = buttonData
+        const submitData = this.getRequestParams()(buttonData, formData)
 
-      // console.log('onConfirm', submitData, buttonData)
+        // console.log('onConfirm', submitData, buttonData)
 
-      try {
-        await this.beforeConfirm(buttonData)
+        try {
+          await this.beforeConfirm(buttonData)
 
-        await request({
-          method: 'post',
-          url: submitUrl,
-          data: submitData
-        }).then(raw => {
-          // console.log('onConfirm', raw)
-          this.onSuccess(raw.message, raw.data)
-        })
-        this.getList()
-        done(true)
-      } catch (e) {
-        // 出错则不关闭dialog
-        done(false)
+          await request({
+            method: 'post',
+            url: submitUrl,
+            data: submitData
+          }).then(raw => {
+            this.onSuccess(raw.message, raw.data)
+          })
+          this.getList()
+          done(true)
+        } catch (e) {
+          // 出错则不关闭dialog
+          done(false)
+        }
       }
     },
 
@@ -989,7 +996,9 @@ export default {
         remain === 0 &&
         this.page === lastPage &&
         this.page > defaultFirstPage
-      ) { this.page-- }
+      ) {
+        this.page--
+      }
     },
 
     // 树形table相关
@@ -1055,12 +1064,12 @@ export default {
 .el-data-table {
   $color-blue: #2196f3;
   $space-width: 18px;
-  .table-header-button-container{
-    .table-header-button-item{
+  .table-header-button-container {
+    .table-header-button-item {
       display: inline-block;
       margin-bottom: 10px;
     }
-    .table-header-button-item+.table-header-button-item {
+    .table-header-button-item + .table-header-button-item {
       margin-left: 10px;
     }
   }

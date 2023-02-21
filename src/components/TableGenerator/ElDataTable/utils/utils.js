@@ -10,4 +10,4 @@ export const removeEmptyKeys = query =>
         ? value.length !== 0
         : !['', undefined, null].includes(value)
     })
-    .reduce((obj, k) => (((obj[k] = query[k]), obj)), {})
+    .reduce((obj, k) => ((obj[k] = query[k]), obj), {})

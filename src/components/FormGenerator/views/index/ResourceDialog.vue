@@ -31,17 +31,10 @@
         >
           jQuery1.8.3
         </el-button>
-        <el-button
-          plain
-          @click="addOne('https://unpkg.com/http-vue-loader')"
-        >
+        <el-button plain @click="addOne('https://unpkg.com/http-vue-loader')">
           http-vue-loader
         </el-button>
-        <el-button
-          icon="el-icon-circle-plus-outline"
-          plain
-          @click="addOne('')"
-        >
+        <el-button icon="el-icon-circle-plus-outline" plain @click="addOne('')">
           添加其他
         </el-button>
       </el-button-group>
@@ -49,10 +42,7 @@
         <el-button @click="close">
           取消
         </el-button>
-        <el-button
-          type="primary"
-          @click="handelConfirm"
-        >
+        <el-button type="primary" @click="handelConfirm">
           确定
         </el-button>
       </div>
@@ -77,10 +67,11 @@ export default {
   mounted() {},
   methods: {
     onOpen() {
-      this.resources = this.originResource.length ? deepClone(this.originResource) : ['']
+      this.resources = this.originResource.length
+        ? deepClone(this.originResource)
+        : ['']
     },
-    onClose() {
-    },
+    onClose() {},
     close() {
       this.$emit('update:visible', false)
     },
@@ -104,13 +95,12 @@ export default {
     }
   }
 }
-
 </script>
 <style lang="scss" scoped>
-.add-item{
+.add-item {
   margin-top: 8px;
 }
-.url-item{
+.url-item {
   margin-bottom: 12px;
 }
 </style>

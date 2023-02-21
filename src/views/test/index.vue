@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div v-if="formConf.fields && formConf.fields.length > 0" class="form-container">
+    <div
+      v-if="formConf.fields && formConf.fields.length > 0"
+      class="form-container"
+    >
       <form-render :form-conf="formConf" @submit="sumbitForm" />
     </div>
     <el-button v-permission="'TestTableNewPage'" type="primary">
@@ -22,9 +25,7 @@ export default {
   data() {
     return {
       formConf1: {
-        fields: [
-
-        ],
+        fields: [],
         __methods__: {},
         submitFormDataUrl: '',
         getFormDataUrl: '',
@@ -42,175 +43,186 @@ export default {
       },
       formConf: {},
       formConf11: {
-        'fields': [{
-          '__config__': {
-            'label': '单行文本1',
-            'labelWidth': null,
-            'showLabel': true,
-            'changeTag': true,
-            'tag': 'el-input',
-            'tagIcon': 'input',
-            'required': true,
-            'layout': 'colFormItem',
-            'span': 24,
-            'document': 'https://element.eleme.cn/#/zh-CN/component/input',
-            'regList': [],
-            'formId': 112,
-            'renderKey': 1675306901087
+        fields: [
+          {
+            __config__: {
+              label: '单行文本1',
+              labelWidth: null,
+              showLabel: true,
+              changeTag: true,
+              tag: 'el-input',
+              tagIcon: 'input',
+              required: true,
+              layout: 'colFormItem',
+              span: 24,
+              document: 'https://element.eleme.cn/#/zh-CN/component/input',
+              regList: [],
+              formId: 112,
+              renderKey: 1675306901087
+            },
+            __slot__: {
+              prepend: '',
+              append: ''
+            },
+            placeholder: '请输入单行文本',
+            style: {
+              width: '100%'
+            },
+            clearable: true,
+            'prefix-icon': '',
+            'suffix-icon': '',
+            maxlength: null,
+            'show-word-limit': false,
+            readonly: false,
+            disabled: false,
+            __vModel__: 'field112'
           },
-          '__slot__': {
-            'prepend': '',
-            'append': ''
+          {
+            __config__: {
+              label: '单行文本2',
+              labelWidth: null,
+              showLabel: true,
+              changeTag: true,
+              tag: 'el-input',
+              tagIcon: 'input',
+              required: false,
+              layout: 'colFormItem',
+              span: 24,
+              document: 'https://element.eleme.cn/#/zh-CN/component/input',
+              regList: [],
+              formId: 113,
+              renderKey: 1675306903124
+            },
+            __slot__: {
+              prepend: '',
+              append: ''
+            },
+            placeholder: '请输入单行文本',
+            style: {
+              width: '100%'
+            },
+            clearable: true,
+            'prefix-icon': '',
+            'suffix-icon': '',
+            maxlength: null,
+            'show-word-limit': false,
+            readonly: false,
+            disabled: false,
+            __vModel__: 'field113'
           },
-          'placeholder': '请输入单行文本',
-          'style': {
-            'width': '100%'
+          {
+            __config__: {
+              label: '单行文本3',
+              labelWidth: null,
+              showLabel: true,
+              changeTag: true,
+              tag: 'el-input',
+              tagIcon: 'input',
+              required: false,
+              layout: 'colFormItem',
+              span: 24,
+              document: 'https://element.eleme.cn/#/zh-CN/component/input',
+              regList: [],
+              formId: 114,
+              renderKey: 1675306924429
+            },
+            __slot__: {
+              prepend: '',
+              append: ''
+            },
+            placeholder: '请输入单行文本',
+            style: {
+              width: '100%'
+            },
+            clearable: true,
+            'prefix-icon': '',
+            'suffix-icon': '',
+            maxlength: null,
+            'show-word-limit': false,
+            readonly: false,
+            disabled: false,
+            __vModel__: 'field114'
           },
-          'clearable': true,
-          'prefix-icon': '',
-          'suffix-icon': '',
-          'maxlength': null,
-          'show-word-limit': false,
-          'readonly': false,
-          'disabled': false,
-          '__vModel__': 'field112'
-        }, {
-          '__config__': {
-            'label': '单行文本2',
-            'labelWidth': null,
-            'showLabel': true,
-            'changeTag': true,
-            'tag': 'el-input',
-            'tagIcon': 'input',
-            'required': false,
-            'layout': 'colFormItem',
-            'span': 24,
-            'document': 'https://element.eleme.cn/#/zh-CN/component/input',
-            'regList': [],
-            'formId': 113,
-            'renderKey': 1675306903124
-          },
-          '__slot__': {
-            'prepend': '',
-            'append': ''
-          },
-          'placeholder': '请输入单行文本',
-          'style': {
-            'width': '100%'
-          },
-          'clearable': true,
-          'prefix-icon': '',
-          'suffix-icon': '',
-          'maxlength': null,
-          'show-word-limit': false,
-          'readonly': false,
-          'disabled': false,
-          '__vModel__': 'field113'
-        }, {
-          '__config__': {
-            'label': '单行文本3',
-            'labelWidth': null,
-            'showLabel': true,
-            'changeTag': true,
-            'tag': 'el-input',
-            'tagIcon': 'input',
-            'required': false,
-            'layout': 'colFormItem',
-            'span': 24,
-            'document': 'https://element.eleme.cn/#/zh-CN/component/input',
-            'regList': [],
-            'formId': 114,
-            'renderKey': 1675306924429
-          },
-          '__slot__': {
-            'prepend': '',
-            'append': ''
-          },
-          'placeholder': '请输入单行文本',
-          'style': {
-            'width': '100%'
-          },
-          'clearable': true,
-          'prefix-icon': '',
-          'suffix-icon': '',
-          'maxlength': null,
-          'show-word-limit': false,
-          'readonly': false,
-          'disabled': false,
-          '__vModel__': 'field114'
-        }, {
-          '__config__': {
-            'layout': 'rowFormItem',
-            'tagIcon': 'row',
-            'layoutTree': true,
-            'document': 'https://element.eleme.cn/#/zh-CN/component/layout#row-attributes',
-            'formId': 116,
-            'renderKey': 1675306949481,
-            'componentName': 'row116',
-            'children': [{
-              '__config__': {
-                'label': '',
-                'showLabel': false,
-                'changeTag': true,
-                'labelWidth': null,
-                'tag': 'el-button',
-                'tagIcon': 'button',
-                'span': 6,
-                'layout': 'colFormItem',
-                'document': 'https://element.eleme.cn/#/zh-CN/component/button',
-                'formId': 117,
-                'renderKey': 1675306995097
-              },
-              '__slot__': {
-                'default': '查询'
-              },
-              'on': {
-                'click': 'search'
-              },
-              'type': 'primary',
-              'icon': '',
-              'round': false,
-              'size': 'small',
-              'plain': false,
-              'circle': false,
-              'disabled': false,
-              '__vModel__': 'search'
-            }, {
-              '__config__': {
-                'label': '',
-                'showLabel': false,
-                'changeTag': true,
-                'labelWidth': null,
-                'tag': 'el-button',
-                'tagIcon': 'button',
-                'span': 6,
-                'layout': 'colFormItem',
-                'document': 'https://element.eleme.cn/#/zh-CN/component/button',
-                'formId': 118,
-                'renderKey': 1675307096816
-              },
-              '__slot__': {
-                'default': '重置'
-              },
-              'on': {
-                'click': 'resetSearch'
-              },
-              'type': '',
-              'icon': '',
-              'round': false,
-              'size': 'small',
-              'plain': true,
-              'circle': false,
-              'disabled': false,
-              '__vModel__': 'resetSearch'
-            }]
-          },
-          'span': 6,
-          'gutter': 15,
-          'type': 'flex',
-          'justify': 'center',
-          'align': 'top'
-        }],
+          {
+            __config__: {
+              layout: 'rowFormItem',
+              tagIcon: 'row',
+              layoutTree: true,
+              document:
+                'https://element.eleme.cn/#/zh-CN/component/layout#row-attributes',
+              formId: 116,
+              renderKey: 1675306949481,
+              componentName: 'row116',
+              children: [
+                {
+                  __config__: {
+                    label: '',
+                    showLabel: false,
+                    changeTag: true,
+                    labelWidth: null,
+                    tag: 'el-button',
+                    tagIcon: 'button',
+                    span: 6,
+                    layout: 'colFormItem',
+                    document:
+                      'https://element.eleme.cn/#/zh-CN/component/button',
+                    formId: 117,
+                    renderKey: 1675306995097
+                  },
+                  __slot__: {
+                    default: '查询'
+                  },
+                  on: {
+                    click: 'search'
+                  },
+                  type: 'primary',
+                  icon: '',
+                  round: false,
+                  size: 'small',
+                  plain: false,
+                  circle: false,
+                  disabled: false,
+                  __vModel__: 'search'
+                },
+                {
+                  __config__: {
+                    label: '',
+                    showLabel: false,
+                    changeTag: true,
+                    labelWidth: null,
+                    tag: 'el-button',
+                    tagIcon: 'button',
+                    span: 6,
+                    layout: 'colFormItem',
+                    document:
+                      'https://element.eleme.cn/#/zh-CN/component/button',
+                    formId: 118,
+                    renderKey: 1675307096816
+                  },
+                  __slot__: {
+                    default: '重置'
+                  },
+                  on: {
+                    click: 'resetSearch'
+                  },
+                  type: '',
+                  icon: '',
+                  round: false,
+                  size: 'small',
+                  plain: true,
+                  circle: false,
+                  disabled: false,
+                  __vModel__: 'resetSearch'
+                }
+              ]
+            },
+            span: 6,
+            gutter: 15,
+            type: 'flex',
+            justify: 'center',
+            align: 'top'
+          }
+        ],
         __methods__: {
           search() {
             // console.log('search', this.formData, this.$refs.elForm)
@@ -227,63 +239,64 @@ export default {
             this.resetForm()
           }
         },
-        'formRef': 'elForm',
-        'formModel': 'formData',
-        'size': 'small',
-        'labelPosition': 'right',
-        'labelWidth': 100,
-        'formRules': 'rules',
-        'span': 6,
-        'gutter': 15,
-        'disabled': false,
-        'formBtns': false
+        formRef: 'elForm',
+        formModel: 'formData',
+        size: 'small',
+        labelPosition: 'right',
+        labelWidth: 100,
+        formRules: 'rules',
+        span: 6,
+        gutter: 15,
+        disabled: false,
+        formBtns: false
       },
       formConf22: {
-        'fields': [{
-          '__config__': {
-            'label': '单行文本1',
-            'labelWidth': null,
-            'showLabel': true,
-            'changeTag': true,
-            'tag': 'el-input',
-            'tagIcon': 'input',
-            'required': true,
-            'layout': 'colFormItem',
-            'span': 24,
-            'document': 'https://element.eleme.cn/#/zh-CN/component/input',
-            'regList': [],
-            'formId': 112,
-            'renderKey': 1675306901087
-          },
-          '__slot__': {
-            'prepend': '',
-            'append': ''
-          },
-          'placeholder': '请输入单行文本',
-          'style': {
-            'width': '100%'
-          },
-          'clearable': true,
-          'prefix-icon': '',
-          'suffix-icon': '',
-          'maxlength': null,
-          'show-word-limit': false,
-          'readonly': false,
-          'disabled': false,
-          '__vModel__': 'field112'
-        }],
-        'formRef': 'elForm',
-        'formModel': 'formData',
-        'size': 'small',
-        'labelPosition': 'right',
-        'labelWidth': 100,
-        'formRules': 'rules',
-        'span': 6,
-        'gutter': 15,
-        'disabled': false,
-        'formBtns': true
+        fields: [
+          {
+            __config__: {
+              label: '单行文本1',
+              labelWidth: null,
+              showLabel: true,
+              changeTag: true,
+              tag: 'el-input',
+              tagIcon: 'input',
+              required: true,
+              layout: 'colFormItem',
+              span: 24,
+              document: 'https://element.eleme.cn/#/zh-CN/component/input',
+              regList: [],
+              formId: 112,
+              renderKey: 1675306901087
+            },
+            __slot__: {
+              prepend: '',
+              append: ''
+            },
+            placeholder: '请输入单行文本',
+            style: {
+              width: '100%'
+            },
+            clearable: true,
+            'prefix-icon': '',
+            'suffix-icon': '',
+            maxlength: null,
+            'show-word-limit': false,
+            readonly: false,
+            disabled: false,
+            __vModel__: 'field112'
+          }
+        ],
+        formRef: 'elForm',
+        formModel: 'formData',
+        size: 'small',
+        labelPosition: 'right',
+        labelWidth: 100,
+        formRules: 'rules',
+        span: 6,
+        gutter: 15,
+        disabled: false,
+        formBtns: true
       }
-
     }
   },
   computed: {},
@@ -295,9 +308,7 @@ export default {
     this.getFormConf()
     // console.log(JSON.stringify(this.formConf.fields[0].__config__.regList));
   },
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
     getFormConf() {
       getFormConf().then(res => {

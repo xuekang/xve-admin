@@ -37,5 +37,5 @@ module.exports = {
    * @type {object} name:fade-transform, mode:out-in
    * @description 页面过渡动画
    */
-  pageTransitionAnimation: { 'name': '', 'mode': '' }
+  pageTransitionAnimation: { name: '', mode: '' }
 }

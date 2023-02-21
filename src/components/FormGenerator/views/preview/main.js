@@ -9,7 +9,8 @@ Vue.prototype.$axios = axios
 const $previewApp = document.getElementById('previewApp')
 const childAttrs = {
   file: '',
-  dialog: ' width="600px" class="dialog-width" v-if="visible" :visible.sync="visible" :modal-append-to-body="false" '
+  dialog:
+    ' width="600px" class="dialog-width" v-if="visible" :visible.sync="visible" :modal-append-to-body="false" '
 }
 
 window.addEventListener('message', init, false)

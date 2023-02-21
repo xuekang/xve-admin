@@ -166,13 +166,16 @@ export const selectComponents = [
       document: 'https://element.eleme.cn/#/zh-CN/component/select'
     },
     __slot__: {
-      options: [{
-        label: '选项一',
-        value: 1
-      }, {
-        label: '选项二',
-        value: 2
-      }]
+      options: [
+        {
+          label: '选项一',
+          value: 1
+        },
+        {
+          label: '选项二',
+          value: 2
+        }
+      ]
     },
     placeholder: '请选择',
     style: { width: '100%' },
@@ -184,7 +187,8 @@ export const selectComponents = [
   {
     __config__: {
       label: '级联选择',
-      url: 'https://www.fastmock.site/mock/f8d7a54fb1e60561e2f720d5a810009d/fg/cascaderList',
+      url:
+        'https://www.fastmock.site/mock/f8d7a54fb1e60561e2f720d5a810009d/fg/cascaderList',
       method: 'get',
       dataPath: 'list',
       dataConsumer: 'options',
@@ -201,16 +205,20 @@ export const selectComponents = [
       changeTag: true,
       document: 'https://element.eleme.cn/#/zh-CN/component/cascader'
     },
-    options: [{
-      id: 1,
-      value: 1,
-      label: '选项1',
-      children: [{
-        id: 2,
-        value: 2,
-        label: '选项1-1'
-      }]
-    }],
+    options: [
+      {
+        id: 1,
+        value: 1,
+        label: '选项1',
+        children: [
+          {
+            id: 2,
+            value: 2,
+            label: '选项1-1'
+          }
+        ]
+      }
+    ],
     placeholder: '请选择',
     style: { width: '100%' },
     props: {
@@ -245,13 +253,16 @@ export const selectComponents = [
       document: 'https://element.eleme.cn/#/zh-CN/component/radio'
     },
     __slot__: {
-      options: [{
-        label: '选项一',
-        value: 1
-      }, {
-        label: '选项二',
-        value: 2
-      }]
+      options: [
+        {
+          label: '选项一',
+          value: 1
+        },
+        {
+          label: '选项二',
+          value: 2
+        }
+      ]
     },
     style: {},
     size: 'medium',
@@ -275,13 +286,16 @@ export const selectComponents = [
       document: 'https://element.eleme.cn/#/zh-CN/component/checkbox'
     },
     __slot__: {
-      options: [{
-        label: '选项一',
-        value: 1
-      }, {
-        label: '选项二',
-        value: 2
-      }]
+      options: [
+        {
+          label: '选项一',
+          value: 1
+        },
+        {
+          label: '选项二',
+          value: 2
+        }
+      ]
     },
     style: {},
     size: 'medium',
@@ -517,7 +531,8 @@ export const layoutComponents = [
       tagIcon: 'row',
       label: '行容器',
       layoutTree: true,
-      document: 'https://element.eleme.cn/#/zh-CN/component/layout#row-attributes'
+      document:
+        'https://element.eleme.cn/#/zh-CN/component/layout#row-attributes'
     },
     type: 'default',
     justify: 'start',
@@ -564,63 +579,71 @@ export const layoutComponents = [
       method: 'get',
       dataPath: 'list',
       dataConsumer: 'data',
-      url: 'https://www.fastmock.site/mock/f8d7a54fb1e60561e2f720d5a810009d/fg/tableData',
-      children: [{
-        __config__: {
-          layout: 'raw',
-          tag: 'el-table-column',
-          renderKey: 15957617660153
+      url:
+        'https://www.fastmock.site/mock/f8d7a54fb1e60561e2f720d5a810009d/fg/tableData',
+      children: [
+        {
+          __config__: {
+            layout: 'raw',
+            tag: 'el-table-column',
+            renderKey: 15957617660153
+          },
+          prop: 'date',
+          label: '日期'
         },
-        prop: 'date',
-        label: '日期'
-      }, {
-        __config__: {
-          layout: 'raw',
-          tag: 'el-table-column',
-          renderKey: 15957617660152
+        {
+          __config__: {
+            layout: 'raw',
+            tag: 'el-table-column',
+            renderKey: 15957617660152
+          },
+          prop: 'address',
+          label: '地址'
         },
-        prop: 'address',
-        label: '地址'
-      }, {
-        __config__: {
-          layout: 'raw',
-          tag: 'el-table-column',
-          renderKey: 15957617660151
+        {
+          __config__: {
+            layout: 'raw',
+            tag: 'el-table-column',
+            renderKey: 15957617660151
+          },
+          prop: 'name',
+          label: '名称'
         },
-        prop: 'name',
-        label: '名称'
-      }, {
-        __config__: {
-          layout: 'raw',
-          tag: 'el-table-column',
-          renderKey: 1595774496335,
-          children: [
-            {
-              __config__: {
-                label: '按钮',
-                tag: 'el-button',
-                tagIcon: 'button',
-                layout: 'raw',
-                renderKey: 1595779809901
-              },
-              __slot__: {
-                default: '主要按钮'
-              },
-              type: 'primary',
-              icon: 'el-icon-search',
-              round: false,
-              size: 'medium'
-            }
-          ]
-        },
-        label: '操作'
-      }]
+        {
+          __config__: {
+            layout: 'raw',
+            tag: 'el-table-column',
+            renderKey: 1595774496335,
+            children: [
+              {
+                __config__: {
+                  label: '按钮',
+                  tag: 'el-button',
+                  tagIcon: 'button',
+                  layout: 'raw',
+                  renderKey: 1595779809901
+                },
+                __slot__: {
+                  default: '主要按钮'
+                },
+                type: 'primary',
+                icon: 'el-icon-search',
+                round: false,
+                size: 'medium'
+              }
+            ]
+          },
+          label: '操作'
+        }
+      ]
     },
     data: [],
-    directives: [{
-      name: 'loading',
-      value: true
-    }],
+    directives: [
+      {
+        name: 'loading',
+        value: true
+      }
+    ],
     border: true,
     type: 'default',
     justify: 'start',

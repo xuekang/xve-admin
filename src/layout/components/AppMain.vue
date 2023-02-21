@@ -1,6 +1,9 @@
 <template>
   <section class="app-main">
-    <transition :name="pageTransitionAnimationName" :mode="pageTransitionAnimationName">
+    <transition
+      :name="pageTransitionAnimationName"
+      :mode="pageTransitionAnimationName"
+    >
       <keep-alive :include="cachedViews">
         <router-view :key="key" />
       </keep-alive>
@@ -14,8 +17,16 @@ export default {
   name: 'AppMain',
   data() {
     return {
-      pageTransitionAnimationName: this._.get(defaultSettings, 'pageTransitionAnimation.name', ''),
-      pageTransitionAnimationMode: this._.get(defaultSettings, 'pageTransitionAnimation.mode', '')
+      pageTransitionAnimationName: this._.get(
+        defaultSettings,
+        'pageTransitionAnimation.name',
+        ''
+      ),
+      pageTransitionAnimationMode: this._.get(
+        defaultSettings,
+        'pageTransitionAnimation.mode',
+        ''
+      )
     }
   },
   computed: {
@@ -38,7 +49,7 @@ export default {
   overflow: hidden;
 }
 
-.fixed-header+.app-main {
+.fixed-header + .app-main {
   padding-top: 50px;
 }
 
@@ -48,7 +59,7 @@ export default {
     min-height: calc(100vh - 84px);
   }
 
-  .fixed-header+.app-main {
+  .fixed-header + .app-main {
     padding-top: 84px;
   }
 }

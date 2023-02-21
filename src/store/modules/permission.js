@@ -1,7 +1,12 @@
-import { localRoutes, constantRoutes } from '@/router'
+import { localRoutes, constantRoutes, loadView } from '@/router'
 import Layout from '@/layout'
+
+const commonComponent = {
+  Layout
+}
 /**
  * Use meta.role to determine if the current user has permission
+ *
  * @param roles
  * @param route
  */
@@ -46,9 +51,10 @@ export function formatAsyncRoutes(accessedRoutes) {
     const tmp = { ...route }
     // console.log('formatAsyncRoutes tmp.component', tmp.component)
     if (tmp.component) {
-      tmp.component = window.eval(tmp.component)
-    } else {
-      tmp.component = localRoutes[tmp.name]
+      tmp.component = commonComponent[tmp.component]
+    } else if (tmp.path) {
+      tmp.component = loadView(tmp.path)
+      // tmp.component = localRoutes[tmp.name]
     }
     if (tmp.children) {
       tmp.children = formatAsyncRoutes(tmp.children)
@@ -75,7 +81,6 @@ const mutations = {
 const actions = {
   generateRoutes({ commit }, asyncRoutes) {
     return new Promise(resolve => {
-      window.$Layout = Layout
       const accessedRoutes = formatAsyncRoutes(asyncRoutes)
       accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
       // console.log('accessedRoutes', accessedRoutes)

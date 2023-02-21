@@ -23,8 +23,11 @@ const layouts = {
     if (config.showLabel === false) labelWidth = '0'
     return (
       <el-col span={config.span}>
-        <el-form-item label-width={labelWidth} prop={scheme.__vModel__}
-          label={config.showLabel ? config.label : ''}>
+        <el-form-item
+          label-width={labelWidth}
+          prop={scheme.__vModel__}
+          label={config.showLabel ? config.label : ''}
+        >
           <render conf={scheme} on={listeners} />
         </el-form-item>
       </el-col>
@@ -33,15 +36,19 @@ const layouts = {
   rowFormItem(h, scheme) {
     let child = renderChildren.apply(this, arguments)
     if (scheme.type === 'flex') {
-      child = <el-row type={scheme.type} justify={scheme.justify} align={scheme.align}>
-        {child}
-      </el-row>
+      child = (
+        <el-row
+          type={scheme.type}
+          justify={scheme.justify}
+          align={scheme.align}
+        >
+          {child}
+        </el-row>
+      )
     }
     return (
       <el-col span={scheme.span}>
-        <el-row gutter={scheme.gutter}>
-          {child}
-        </el-row>
+        <el-row gutter={scheme.gutter}>{child}</el-row>
       </el-col>
     )
   }
@@ -70,12 +77,20 @@ function renderFrom(h) {
 }
 
 function formBtns(h) {
-  return <el-col>
-    <el-form-item size={this.formConf.size}>
-      <el-button type='primary' loading={this.formConf.loading} onClick={this.submitForm}>提交</el-button>
-      <el-button onClick={this.resetForm}>重置</el-button>
-    </el-form-item>
-  </el-col>
+  return (
+    <el-col>
+      <el-form-item size={this.formConf.size}>
+        <el-button
+          type="primary"
+          loading={this.formConf.loading}
+          onClick={this.submitForm}
+        >
+          提交
+        </el-button>
+        <el-button onClick={this.resetForm}>重置</el-button>
+      </el-form-item>
+    </el-col>
+  )
 }
 
 function renderFormItem(h, elementList) {
@@ -149,12 +164,16 @@ export default {
         const config = cur.__config__
         if (Array.isArray(config.regList)) {
           if (config.required) {
-            const required = { required: config.required, message: cur.placeholder }
+            const required = {
+              required: config.required,
+              message: cur.placeholder
+            }
             if (Array.isArray(config.defaultValue)) {
               required.type = 'array'
               required.message = `请至少选择一个${config.label}`
             }
-            required.message === undefined && (required.message = `${config.label}不能为空`)
+            required.message === undefined &&
+              (required.message = `${config.label}不能为空`)
             config.regList.push(required)
           }
           rules[cur.__vModel__] = config.regList.map(item => {

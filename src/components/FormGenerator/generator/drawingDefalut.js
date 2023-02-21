@@ -13,10 +13,12 @@ export default [
       span: 24,
       document: 'https://element.eleme.cn/#/zh-CN/component/input',
       // 正则校验规则
-      regList: [{
-        pattern: '/^1(3|4|5|7|8|9)\\d{9}$/',
-        message: '手机号格式错误'
-      }]
+      regList: [
+        {
+          pattern: '/^1(3|4|5|7|8|9)\\d{9}$/',
+          message: '手机号格式错误'
+        }
+      ]
     },
     // 组件的插槽属性
     __slot__: {

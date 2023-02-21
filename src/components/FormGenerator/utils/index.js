@@ -9,8 +9,10 @@
  */
 export function indent(str, num, len = 2) {
   if (num === 0) return str
-  const isLeft = num < 0; const result = []; let reg; let
-    spaces = ''
+  const isLeft = num < 0
+  const result = []
+  let reg
+  let spaces = ''
   if (isLeft) {
     num *= -1
     reg = new RegExp(`(^\\s{0,${num * len}})`, 'g')
@@ -126,14 +128,24 @@ export function deepClone(obj) {
   // RegExp
   if (_toString.call(obj) === '[object RegExp]') {
     const flags = []
-    if (obj.global) { flags.push('g') }
-    if (obj.multiline) { flags.push('m') }
-    if (obj.ignoreCase) { flags.push('i') }
+    if (obj.global) {
+      flags.push('g')
+    }
+    if (obj.multiline) {
+      flags.push('m')
+    }
+    if (obj.ignoreCase) {
+      flags.push('i')
+    }
 
     return new RegExp(obj.source, flags.join(''))
   }
 
-  const result = Array.isArray(obj) ? [] : obj.constructor ? new obj.constructor() : {}
+  const result = Array.isArray(obj)
+    ? []
+    : obj.constructor
+    ? new obj.constructor()
+    : {}
 
   for (const key in obj) {
     result[key] = deepClone(obj[key])

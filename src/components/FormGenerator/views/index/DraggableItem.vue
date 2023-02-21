@@ -6,15 +6,25 @@ const components = {
   itemBtns(h, currentItem, index, list) {
     const { copyItem, deleteItem } = this.$listeners
     return [
-      <span class='drawing-item-copy' title='复制' onClick={event => {
-        copyItem(currentItem, list); event.stopPropagation()
-      }}>
-        <i class='el-icon-copy-document' />
+      <span
+        class="drawing-item-copy"
+        title="复制"
+        onClick={event => {
+          copyItem(currentItem, list)
+          event.stopPropagation()
+        }}
+      >
+        <i class="el-icon-copy-document" />
       </span>,
-      <span class='drawing-item-delete' title='删除' onClick={event => {
-        deleteItem(index, list); event.stopPropagation()
-      }}>
-        <i class='el-icon-delete' />
+      <span
+        class="drawing-item-delete"
+        title="删除"
+        onClick={event => {
+          deleteItem(index, list)
+          event.stopPropagation()
+        }}
+      >
+        <i class="el-icon-delete" />
       </span>
     ]
   }
@@ -24,18 +34,34 @@ const layouts = {
     const { activeItem } = this.$listeners
     const config = currentItem.__config__
     const child = renderChildren.apply(this, arguments)
-    let className = this.activeId === config.formId ? 'drawing-item active-from-item' : 'drawing-item'
+    let className =
+      this.activeId === config.formId
+        ? 'drawing-item active-from-item'
+        : 'drawing-item'
     if (this.formConf.unFocusedComponentBorder) className += ' unfocus-bordered'
     let labelWidth = config.labelWidth ? `${config.labelWidth}px` : null
     if (config.showLabel === false) labelWidth = '0'
     return (
-      <el-col span={config.span} class={className}
-        nativeOnClick={event => { activeItem(currentItem); event.stopPropagation() }}>
-        <el-form-item label-width={labelWidth}
-          label={config.showLabel ? config.label : ''} required={config.required}>
-          <render key={config.renderKey} conf={currentItem} onInput={ event => {
-            this.$set(config, 'defaultValue', event)
-          }}>
+      <el-col
+        span={config.span}
+        class={className}
+        nativeOnClick={event => {
+          activeItem(currentItem)
+          event.stopPropagation()
+        }}
+      >
+        <el-form-item
+          label-width={labelWidth}
+          label={config.showLabel ? config.label : ''}
+          required={config.required}
+        >
+          <render
+            key={config.renderKey}
+            conf={currentItem}
+            onInput={event => {
+              this.$set(config, 'defaultValue', event)
+            }}
+          >
             {child}
           </render>
         </el-form-item>
@@ -46,22 +72,39 @@ const layouts = {
   rowFormItem(h, currentItem, index, list) {
     const { activeItem } = this.$listeners
     const config = currentItem.__config__
-    const className = this.activeId === config.formId
-      ? 'drawing-row-item active-from-item'
-      : 'drawing-row-item'
+    const className =
+      this.activeId === config.formId
+        ? 'drawing-row-item active-from-item'
+        : 'drawing-row-item'
     let child = renderChildren.apply(this, arguments)
     if (currentItem.type === 'flex') {
-      child = <el-row type={currentItem.type} justify={currentItem.justify} align={currentItem.align}>
-        {child}
-      </el-row>
+      child = (
+        <el-row
+          type={currentItem.type}
+          justify={currentItem.justify}
+          align={currentItem.align}
+        >
+          {child}
+        </el-row>
+      )
     }
     return (
       <el-col span={config.span}>
-        <el-row gutter={config.gutter} class={className}
-          nativeOnClick={event => { activeItem(currentItem); event.stopPropagation() }}>
-          <span class='component-name'>{config.componentName}</span>
-          <draggable list={config.children || []} animation={340}
-            group='componentsGroup' class='drag-wrapper'>
+        <el-row
+          gutter={config.gutter}
+          class={className}
+          nativeOnClick={event => {
+            activeItem(currentItem)
+            event.stopPropagation()
+          }}
+        >
+          <span class="component-name">{config.componentName}</span>
+          <draggable
+            list={config.children || []}
+            animation={340}
+            group="componentsGroup"
+            class="drag-wrapper"
+          >
             {child}
           </draggable>
           {components.itemBtns.apply(this, arguments)}
@@ -72,11 +115,17 @@ const layouts = {
   raw(h, currentItem, index, list) {
     const config = currentItem.__config__
     const child = renderChildren.apply(this, arguments)
-    return <render key={config.renderKey} conf={currentItem} onInput={ event => {
-      this.$set(config, 'defaultValue', event)
-    }}>
-      {child}
-    </render>
+    return (
+      <render
+        key={config.renderKey}
+        conf={currentItem}
+        onInput={event => {
+          this.$set(config, 'defaultValue', event)
+        }}
+      >
+        {child}
+      </render>
+    )
   }
 }
 
@@ -101,18 +150,18 @@ export default {
     render,
     draggable
   },
-  props: [
-    'currentItem',
-    'index',
-    'drawingList',
-    'activeId',
-    'formConf'
-  ],
+  props: ['currentItem', 'index', 'drawingList', 'activeId', 'formConf'],
   render(h) {
     const layout = layouts[this.currentItem.__config__.layout]
 
     if (layout) {
-      return layout.call(this, h, this.currentItem, this.index, this.drawingList)
+      return layout.call(
+        this,
+        h,
+        this.currentItem,
+        this.index,
+        this.drawingList
+      )
     }
     return layoutIsNotFound.call(this)
   }

@@ -13,8 +13,7 @@ export function collect(content, key) {
       }))
       .filter(
         ({ type, value }) =>
-          value !== undefined ||
-          (type === 'group' && Object.keys(value).length)
+          value !== undefined || (type === 'group' && Object.keys(value).length)
       )
       .map(({ id, value }) => [id, value])
   )

@@ -7,7 +7,7 @@ const directives = {
 // 批量注册
 export default {
   install(Vue) {
-    Object.keys(directives).forEach((key) => {
+    Object.keys(directives).forEach(key => {
       Vue.directive(key, directives[key])
     })
   }

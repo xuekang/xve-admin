@@ -22,4 +22,3 @@ export function getFormData(getFormDataUrl, data) {
     data
   })
 }
-

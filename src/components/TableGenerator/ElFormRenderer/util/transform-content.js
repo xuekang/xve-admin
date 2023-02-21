@@ -24,7 +24,7 @@ export default function transformContent(content) {
 function removeDollarInKey(item) {
   Object.keys(item)
     .filter(k => k.startsWith('$') && !(k.slice(1) in item))
-    .forEach(k => (((item[k.slice(1)] = item[k]), delete item[k])))
+    .forEach(k => ((item[k.slice(1)] = item[k]), delete item[k]))
 }
 
 function setItemId(item) {

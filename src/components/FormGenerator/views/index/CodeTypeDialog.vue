@@ -31,7 +31,11 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item v-if="showFileName" label="文件名" prop="fileName">
-              <el-input v-model="formData.fileName" placeholder="请输入文件名" clearable />
+              <el-input
+                v-model="formData.fileName"
+                placeholder="请输入文件名"
+                clearable
+              />
             </el-form-item>
           </el-col>
         </el-form>
@@ -59,28 +63,34 @@ export default {
         type: 'file'
       },
       rules: {
-        fileName: [{
-          required: true,
-          message: '请输入文件名',
-          trigger: 'blur'
-        }],
-        type: [{
-          required: true,
-          message: '生成类型不能为空',
-          trigger: 'change'
-        }]
+        fileName: [
+          {
+            required: true,
+            message: '请输入文件名',
+            trigger: 'blur'
+          }
+        ],
+        type: [
+          {
+            required: true,
+            message: '生成类型不能为空',
+            trigger: 'change'
+          }
+        ]
       },
-      typeOptions: [{
-        label: '页面',
-        value: 'file'
-      }, {
-        label: '弹窗',
-        value: 'dialog'
-      }]
+      typeOptions: [
+        {
+          label: '页面',
+          value: 'file'
+        },
+        {
+          label: '弹窗',
+          value: 'dialog'
+        }
+      ]
     }
   },
-  computed: {
-  },
+  computed: {},
   watch: {},
   mounted() {},
   methods: {
@@ -89,8 +99,7 @@ export default {
         this.formData.fileName = `${+new Date()}.vue`
       }
     },
-    onClose() {
-    },
+    onClose() {},
     close(e) {
       this.$emit('update:visible', false)
     },
@@ -105,6 +114,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

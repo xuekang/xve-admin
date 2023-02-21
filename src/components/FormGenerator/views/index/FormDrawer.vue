@@ -1,6 +1,11 @@
 <template>
   <div>
-    <el-drawer v-bind="$attrs" v-on="$listeners" @opened="onOpen" @close="onClose">
+    <el-drawer
+      v-bind="$attrs"
+      v-on="$listeners"
+      @opened="onOpen"
+      @close="onClose"
+    >
       <div style="height:100%">
         <el-row style="height:100%;overflow:auto">
           <el-col :md="24" :lg="12" class="left-editor">
@@ -12,32 +17,40 @@
             <el-tabs v-model="activeTab" type="card" class="editor-tabs">
               <el-tab-pane name="html">
                 <span slot="label">
-                  <i v-if="activeTab==='html'" class="el-icon-edit" />
+                  <i v-if="activeTab === 'html'" class="el-icon-edit" />
                   <i v-else class="el-icon-document" />
                   template
                 </span>
               </el-tab-pane>
               <el-tab-pane name="js">
                 <span slot="label">
-                  <i v-if="activeTab==='js'" class="el-icon-edit" />
+                  <i v-if="activeTab === 'js'" class="el-icon-edit" />
                   <i v-else class="el-icon-document" />
                   script
                 </span>
               </el-tab-pane>
               <el-tab-pane name="css">
                 <span slot="label">
-                  <i v-if="activeTab==='css'" class="el-icon-edit" />
+                  <i v-if="activeTab === 'css'" class="el-icon-edit" />
                   <i v-else class="el-icon-document" />
                   css
                 </span>
               </el-tab-pane>
             </el-tabs>
-            <div v-show="activeTab==='html'" id="editorHtml" class="tab-editor" />
-            <div v-show="activeTab==='js'" id="editorJs" class="tab-editor" />
-            <div v-show="activeTab==='css'" id="editorCss" class="tab-editor" />
+            <div
+              v-show="activeTab === 'html'"
+              id="editorHtml"
+              class="tab-editor"
+            />
+            <div v-show="activeTab === 'js'" id="editorJs" class="tab-editor" />
+            <div
+              v-show="activeTab === 'css'"
+              id="editorCss"
+              class="tab-editor"
+            />
           </el-col>
           <el-col :md="24" :lg="12" class="right-preview">
-            <div class="action-bar" :style="{'text-align': 'left'}">
+            <div class="action-bar" :style="{ 'text-align': 'left' }">
               <span class="bar-btn" @click="runCode">
                 <i class="el-icon-refresh" />
                 刷新
@@ -50,7 +63,10 @@
                 <i class="el-icon-document-copy" />
                 复制代码
               </span>
-              <span class="bar-btn delete-btn" @click="$emit('update:visible', false)">
+              <span
+                class="bar-btn delete-btn"
+                @click="$emit('update:visible', false)"
+              >
                 <i class="el-icon-circle-close" />
                 关闭
               </span>
@@ -63,7 +79,11 @@
               src="preview.html"
               @load="iframeLoad"
             />
-            <div v-show="!isIframeLoaded" v-loading="true" class="result-wrapper" />
+            <div
+              v-show="!isIframeLoaded"
+              v-loading="true"
+              class="result-wrapper"
+            />
           </el-col>
         </el-row>
       </div>
@@ -80,7 +100,10 @@ import { parse } from '@babel/parser'
 import ClipboardJS from 'clipboard'
 import { saveAs } from 'file-saver'
 import {
-  makeUpHtml, vueTemplate, vueScript, cssStyle
+  makeUpHtml,
+  vueTemplate,
+  vueScript,
+  cssStyle
 } from '@/components/generator/html'
 import { makeUpJs } from '@/components/generator/js'
 import { makeUpCss } from '@/components/generator/css'
@@ -127,8 +150,7 @@ export default {
     }
   },
   watch: {},
-  created() {
-  },
+  created() {},
   mounted() {
     window.addEventListener('keydown', this.preventDefaultSave)
     const clipboard = new ClipboardJS('.copy-btn', {
@@ -269,8 +291,8 @@ export default {
       this.resourceVisible = true
     },
     setResource(arr) {
-      const scripts = []; const
-        links = []
+      const scripts = []
+      const links = []
       if (Array.isArray(arr)) {
         arr.forEach(item => {
           if (item.endsWith('.css')) {
@@ -306,7 +328,7 @@ export default {
   background: #1e1e1e;
   overflow: hidden;
 }
-.setting{
+.setting {
   position: absolute;
   right: 15px;
   top: 3px;

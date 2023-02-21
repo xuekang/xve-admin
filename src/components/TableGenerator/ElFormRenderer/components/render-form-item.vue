@@ -69,14 +69,16 @@
           :key="opt.label"
           v-bind="opt"
           :label="'value' in opt ? opt.value : opt.label"
-        >{{ opt.label }}</el-radio-button>
+          >{{ opt.label }}</el-radio-button
+        >
 
         <el-radio
           v-else-if="data.type === 'radio-group' && data.style !== 'button'"
           :key="opt.label"
           v-bind="opt"
           :label="'value' in opt ? opt.value : opt.label"
-        >{{ opt.label }}</el-radio>
+          >{{ opt.label }}</el-radio
+        >
       </template>
     </custom-component>
   </el-form-item>
@@ -143,8 +145,11 @@ export default {
   },
   computed: {
     // 解构运算符会处理 undefined 的情况
-    componentProps: ({ data: { el }, propsInner }) => ({ ...el, ...propsInner }),
-    hasReadonlyContent: ({ data: { type }}) =>
+    componentProps: ({ data: { el }, propsInner }) => ({
+      ...el,
+      ...propsInner
+    }),
+    hasReadonlyContent: ({ data: { type } }) =>
       this._.includes(['input', 'select'], type),
     hiddenStatus: ({ data: { hidden = () => false }, data, value }) =>
       hidden(value, data),
@@ -160,7 +165,10 @@ export default {
           id,
           atChange = noop,
           on = {},
-          on: { input: originOnInput = noop, change: originOnChange = noop } = {},
+          on: {
+            input: originOnInput = noop,
+            change: originOnChange = noop
+          } = {},
           trim = true
         },
         $parent: {

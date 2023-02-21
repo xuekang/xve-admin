@@ -35,7 +35,7 @@ function mountSlotFiles(h, confClone, children) {
 }
 
 function emitEvents(confClone) {
-  ['on', 'nativeOn'].forEach(attr => {
+  ;['on', 'nativeOn'].forEach(attr => {
     const eventKeyList = Object.keys(confClone[attr] || {})
     eventKeyList.forEach(key => {
       const val = confClone[attr][key]
@@ -52,9 +52,13 @@ function buildDataObject(confClone, dataObject) {
     if (key === '__vModel__') {
       vModel.call(this, dataObject, confClone.__config__.defaultValue)
     } else if (dataObject[key] !== undefined) {
-      if (dataObject[key] === null ||
+      if (
+        dataObject[key] === null ||
         dataObject[key] instanceof RegExp ||
-        ['boolean', 'string', 'number', 'function'].includes(typeof dataObject[key])) {
+        ['boolean', 'string', 'number', 'function'].includes(
+          typeof dataObject[key]
+        )
+      ) {
         dataObject[key] = val
       } else if (Array.isArray(dataObject[key])) {
         dataObject[key] = [...dataObject[key], ...val]

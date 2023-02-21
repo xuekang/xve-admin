@@ -17,10 +17,7 @@
           label-width="100px"
         >
           <el-col :span="24">
-            <el-form-item
-              label="选项名"
-              prop="label"
-            >
+            <el-form-item label="选项名" prop="label">
               <el-input
                 v-model="formData.label"
                 placeholder="请输入选项名"
@@ -29,10 +26,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item
-              label="选项值"
-              prop="value"
-            >
+            <el-form-item label="选项值" prop="value">
               <el-input
                 v-model="formData.value"
                 placeholder="请输入选项值"
@@ -41,7 +35,7 @@
                 <el-select
                   slot="append"
                   v-model="dataType"
-                  :style="{width: '100px'}"
+                  :style="{ width: '100px' }"
                 >
                   <el-option
                     v-for="(item, index) in dataTypeOptions"
@@ -57,10 +51,7 @@
         </el-form>
       </el-row>
       <div slot="footer">
-        <el-button
-          type="primary"
-          @click="handelConfirm"
-        >
+        <el-button type="primary" @click="handelConfirm">
           确定
         </el-button>
         <el-button @click="close">
@@ -154,5 +145,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

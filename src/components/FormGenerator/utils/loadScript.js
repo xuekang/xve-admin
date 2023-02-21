@@ -15,7 +15,8 @@ function loadScript(src, callback) {
     $script.id = src
     $script.async = 1
     document.body.appendChild($script)
-    const onEnd = 'onload' in $script ? stdOnEnd.bind($script) : ieOnEnd.bind($script)
+    const onEnd =
+      'onload' in $script ? stdOnEnd.bind($script) : ieOnEnd.bind($script)
     onEnd($script)
   }
 
@@ -54,7 +55,9 @@ function loadScript(src, callback) {
  */
 export function loadScriptQueue(list, cb) {
   const first = list.shift()
-  list.length ? loadScript(first, () => loadScriptQueue(list, cb)) : loadScript(first, cb)
+  list.length
+    ? loadScript(first, () => loadScriptQueue(list, cb))
+    : loadScript(first, cb)
 }
 
 export default loadScript

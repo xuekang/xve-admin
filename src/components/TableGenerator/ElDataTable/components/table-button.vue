@@ -18,7 +18,6 @@
         :button-size="buttonSize"
         :dialog-form="dialogForm"
         v-bind="dialogAttrs"
-        @onConfirm="onConfirm"
       />
     </div>
   </div>
@@ -125,13 +124,6 @@ export default {
       }
     },
     /**
-     * 获取请求参数
-     */
-    getRequestParams: {
-      type: Function,
-      required: true
-    },
-    /**
      * MessageBox 消息正文内容
      */
     msgboxMessage: {
@@ -181,11 +173,13 @@ export default {
       default: null
     }
   },
+  inject: ['onConfirm', 'getRequestParams'],
   data() {
     return {
       loading: false
     }
   },
+  mounted() {},
   methods: {
     // 监控按钮的Promise进程
     handleClick() {
@@ -203,8 +197,8 @@ export default {
             // 调用父组件中的数据刷新方法
             this.callback()
           })
-          .catch(e => {})
-          .finally(e => {
+          .catch(() => {})
+          .finally(() => {
             this.loading = false
           })
       } else {
@@ -229,16 +223,18 @@ export default {
       options.type = options.type || ''
       // console.log(data, message, title, options)
 
-      options.beforeClose = async(action, instance, done) => {
+      options.beforeClose = async (action, instance, done) => {
         if (action !== 'confirm') return done()
 
         instance.confirmButtonLoading = true
-        console.log(instance)
+        // console.log(2132132132321, instance)
         const confirmDone = (close = true) => {
           instance.confirmButtonLoading = false
           if (close) done()
         }
-        this.$emit('onConfirm', data, {}, confirmDone)
+        // console.log(13131313, this.$parent, this.$listeners)
+        this.onConfirm()(data, {}, confirmDone)
+        // this.$emit('onconfirm', data, {}, confirmDone)
       }
 
       return this.$confirm(msgboxMessage, title, options).catch(() => {
@@ -264,6 +260,9 @@ export default {
         dialogFormData = await this.getInfo(buttonData)
         this.$refs.dialog.closeDialogLoading()
       }
+
+      // console.log(111111, this.$refs.dialog1)
+
       this.$refs.dialog.showForm(this._.cloneDeep(dialogFormData))
 
       // console.log('onShowFormDialog', buttonData, dialogTitle, deepClone(dialogForm), dialogFormData, dialogAttrs)
@@ -276,13 +275,15 @@ export default {
           method: 'post',
           url: this.getUrl,
           data: submitData
-        }).then(raw => {
-          // console.log('getInfo', raw)
-          // this.onSuccess(raw.message, raw.data)
-          resolve(raw.data)
-        }).catch(error => {
-          reject(error)
         })
+          .then(raw => {
+            // console.log('getInfo', raw)
+            // this.onSuccess(raw.message, raw.data)
+            resolve(raw.data)
+          })
+          .catch(error => {
+            reject(error)
+          })
       })
     },
     // 跳转到新标签页面
@@ -296,12 +297,7 @@ export default {
         path: this.newPagePath,
         query: query
       })
-    },
-    // 确认
-    onConfirm(buttonData, formData, done) {
-      this.$emit('onConfirm', buttonData, formData, done)
     }
-
   }
 }
 </script>

@@ -1,17 +1,32 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-Vue.use(Router)
-
-/* Layout */
+/* 公共组件 */
 import Layout from '@/layout'
+export const commonComponent = {
+  Layout
+}
 
 /* Router Modules */
-import testRouter from './modules/test'
 // import componentsRouter from './modules/components'
 // import chartsRouter from './modules/charts'
 // import tableRouter from './modules/table'
 // import nestedRouter from './modules/nested'
+
+// 路由懒加载
+export const loadView = view => {
+  return () => Promise.resolve(require(`@/views/${view}`).default)
+}
+
+// 兼容vue-router重定向报错
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject)
+    return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => err)
+}
+
+Vue.use(Router)
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -80,7 +95,12 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true, noCache: false }
+        meta: {
+          title: 'Dashboard',
+          icon: 'dashboard',
+          affix: true,
+          noCache: false
+        }
       }
     ]
   },
@@ -101,7 +121,7 @@ export const constantRoutes = [
 ]
 
 export const localRoutes = {
-  ...testRouter
+  // ...testRouter
 }
 
 /**
@@ -109,7 +129,6 @@ export const localRoutes = {
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-
   // {
   //   path: '/test',
   //   component: Layout,
@@ -208,7 +227,6 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-
   // {
   //   path: '/icon',
   //   component: Layout,
@@ -221,13 +239,11 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-
   // /** when your routing map is too long, you can split it into small modules **/
   // componentsRouter,
   // chartsRouter,
   // nestedRouter,
   // tableRouter,
-
   // {
   //   path: '/example',
   //   component: Layout,
@@ -259,7 +275,6 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-
   // {
   //   path: '/tab',
   //   component: Layout,
@@ -272,7 +287,6 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-
   // {
   //   path: '/error',
   //   component: Layout,
@@ -297,7 +311,6 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-
   // {
   //   path: '/error-log',
   //   component: Layout,
@@ -310,7 +323,6 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-
   // {
   //   path: '/excel',
   //   component: Layout,
@@ -347,7 +359,6 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-
   // {
   //   path: '/zip',
   //   component: Layout,
@@ -364,7 +375,6 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-
   // {
   //   path: '/pdf',
   //   component: Layout,
@@ -383,7 +393,6 @@ export const asyncRoutes = [
   //   component: () => import('@/views/pdf/download'),
   //   hidden: true
   // },
-
   // {
   //   path: '/theme',
   //   component: Layout,
@@ -396,7 +405,6 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-
   // {
   //   path: '/clipboard',
   //   component: Layout,
@@ -409,7 +417,6 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-
   // {
   //   path: 'external-link',
   //   component: Layout,
@@ -420,16 +427,16 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-
   // // 404 page must be placed at the end !!!
   // { path: '*', redirect: '/404', hidden: true }
 ]
 
-const createRouter = () => new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+const createRouter = () =>
+  new Router({
+    // mode: 'history', // require service support
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes
+  })
 
 const router = createRouter()
 

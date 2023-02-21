@@ -11,4 +11,3 @@ export function showErr(err_msg) {
     duration: 3 * 1000
   })
 }
-

@@ -17,8 +17,8 @@ export function parseTime(time, cFormat) {
   if (typeof time === 'object') {
     date = time
   } else {
-    if ((typeof time === 'string')) {
-      if ((/^[0-9]+$/.test(time))) {
+    if (typeof time === 'string') {
+      if (/^[0-9]+$/.test(time)) {
         // support "1548221490638"
         time = parseInt(time)
       } else {
@@ -28,7 +28,7 @@ export function parseTime(time, cFormat) {
       }
     }
 
-    if ((typeof time === 'number') && (time.toString().length === 10)) {
+    if (typeof time === 'number' && time.toString().length === 10) {
       time = time * 1000
     }
     date = new Date(time)
@@ -45,7 +45,9 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') {
+      return ['日', '一', '二', '三', '四', '五', '六'][value]
+    }
     return value.toString().padStart(2, '0')
   })
   return time_str
@@ -124,7 +126,7 @@ export function byteLength(str) {
     const code = str.charCodeAt(i)
     if (code > 0x7f && code <= 0x7ff) s++
     else if (code > 0x7ff && code <= 0xffff) s += 2
-    if (code >= 0xDC00 && code <= 0xDFFF) i--
+    if (code >= 0xdc00 && code <= 0xdfff) i--
   }
   return s
 }
@@ -361,7 +363,10 @@ export function removeClass(ele, cls) {
  * @returns {boolean}
  */
 export function isFalse(value) {
-  return ['', undefined, null].indexOf(value) > -1 || (Array.isArray(value) && value.length === 0)
+  return (
+    ['', undefined, null].indexOf(value) > -1 ||
+    (Array.isArray(value) && value.length === 0)
+  )
 }
 
 /**
@@ -374,5 +379,5 @@ export function removeEmptyKeys(query) {
       const value = query[k]
       return !isFalse(value)
     })
-    .reduce((obj, k) => (((obj[k] = query[k]), obj)), {})
+    .reduce((obj, k) => ((obj[k] = query[k]), obj), {})
 }
