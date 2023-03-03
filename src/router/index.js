@@ -3,8 +3,10 @@ import Router from 'vue-router'
 
 /* 公共组件 */
 import Layout from '@/layout'
+import Table from '@/views/table'
 export const commonComponent = {
-  Layout
+  Layout,
+  Table
 }
 
 /* Router Modules */

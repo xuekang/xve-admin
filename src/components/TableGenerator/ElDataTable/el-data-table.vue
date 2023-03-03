@@ -278,6 +278,13 @@ export default {
       default: 'page_size'
     },
     /**
+     * 增删改查的表名
+     */
+    crudTableName: {
+      type: String,
+      default: ''
+    },
+    /**
      * 自定义处理请求返回的数据
      * @param raw axios 返回的原始数据
      * @return 函数应返回 {total, data}
@@ -794,7 +801,7 @@ export default {
     getListParams() {
       // 构造query对象
       let query = {}
-
+      query.crudTableName = this.crudTableName
       Object.assign(query, this._extraQuery)
 
       // 查询条件
@@ -933,6 +940,7 @@ export default {
       return (buttonData, formData) => {
         // console.log('getRequestParams', this)
         const submitData = {}
+        submitData.crudTableName = this.crudTableName
         submitData.tableParams = this.getListParams()
         Object.assign(submitData, buttonData.params)
 

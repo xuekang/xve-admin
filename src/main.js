@@ -33,6 +33,10 @@ Vue.prototype._ = _
 import axios from 'axios'
 Vue.prototype.$axios = axios
 
+//注册全局组件
+import Tinymce from '@/components/FormGenerator/tinymce/index.vue'
+Vue.component('tinymce', Tinymce)
+
 // 注册全局指令
 import Directive from './directive'
 Vue.use(Directive)

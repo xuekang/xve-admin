@@ -24,7 +24,7 @@ export default {
   watch: {},
   beforeCreate() {},
   created() {
-    console.log(this.$route)
+    // console.log(this.$route)
     this.getTableConf()
   },
   mounted() {},
@@ -33,11 +33,14 @@ export default {
     async getTableConf() {
       this.loading = true
       const auth_id = this._.get(this.$route, 'meta.auth_id', '')
-      await getTableConf(auth_id).then(res => {
-        console.log('表格配置', res.data)
-        this.tableConf = { ...this.tableConf, ...res.data }
-      })
-      this.loading = false
+      await getTableConf(auth_id)
+        .then(res => {
+          console.log('表格配置', res.data)
+          this.tableConf = { ...this.tableConf, ...res.data }
+        })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 }

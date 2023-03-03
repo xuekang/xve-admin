@@ -4,7 +4,7 @@
       :is="isText ? 'text-button' : 'el-button'"
       :size="buttonSize"
       v-bind="$attrs"
-      :loading="loading"
+      :loading="buttonLoading"
       :type="type"
       v-on="$listeners"
       @click.stop="handleClick"
@@ -176,7 +176,7 @@ export default {
   inject: ['onConfirm', 'getRequestParams'],
   data() {
     return {
-      loading: false
+      buttonLoading: false
     }
   },
   mounted() {},
@@ -190,7 +190,7 @@ export default {
       // console.log('测试按钮', this, this_props)
       if (this.click) {
         // 自定义按钮
-        this.loading = true
+        this.buttonLoading = true
         Promise.resolve(this.click(this_props))
           .then(flag => {
             if (flag === false) return
@@ -199,7 +199,7 @@ export default {
           })
           .catch(() => {})
           .finally(() => {
-            this.loading = false
+            this.buttonLoading = false
           })
       } else {
         // 处理按钮动作模式
@@ -215,6 +215,7 @@ export default {
      */
     showConfirm(data) {
       let options = {
+        lockScroll: false
         // 'closeOnClickModal': false
       }
       const { msgboxMessage, msgboxAttrs } = data
@@ -257,8 +258,9 @@ export default {
       let dialogFormData = {}
       if (this.getUrl) {
         this.$refs.dialog.showDialogLoading()
-        dialogFormData = await this.getInfo(buttonData)
-        this.$refs.dialog.closeDialogLoading()
+        dialogFormData = await this.getInfo(buttonData).finally(() => {
+          this.$refs.dialog.closeDialogLoading()
+        })
       }
 
       // console.log(111111, this.$refs.dialog1)

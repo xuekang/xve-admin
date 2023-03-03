@@ -1,9 +1,9 @@
-import { localRoutes, constantRoutes, loadView } from '@/router'
-import Layout from '@/layout'
-
-const commonComponent = {
-  Layout
-}
+import {
+  localRoutes,
+  constantRoutes,
+  loadView,
+  commonComponent
+} from '@/router'
 /**
  * Use meta.role to determine if the current user has permission
  *

@@ -1,14 +1,16 @@
 <template>
   <el-dialog
     ref="dialog"
-    :visible.sync="visible"
+    v-bind="$attrs"
+    :visible.sync="dialogVisible"
     :title="dialogTitle"
     :modal-append-to-body="false"
     :append-to-body="true"
     :lock-scroll="false"
     :custom-class="customClass"
-    v-bind="dialogAttrs"
-    @close="resetFields"
+    v-on="$listeners"
+    @open="onOpen"
+    @close="onClose"
   >
     <div
       v-if="formConf.fields && formConf.fields.length > 0"
@@ -16,22 +18,23 @@
     >
       <form-render
         :key="formKey"
+        ref="formRender"
         :form-conf="formConf"
-        @submit="confirm"
-        @reset="resetFields"
+        @submit="onConfirmForm"
+        @reset="onResetForm"
       />
     </div>
 
-    <!-- <div v-show="hasFooter" slot="footer">
-      <el-button :size="buttonSize" @click="visible = false">取 消</el-button>
-      <el-button :size="buttonSize" @click="resetFields">重 置</el-button>
+    <div v-show="hasFooter" slot="footer">
+      <el-button :size="buttonSize" @click="handleReset">重 置</el-button>
       <el-button
         type="primary"
         :loading="buttonLoading"
         :size="buttonSize"
-        @click="confirm"
-      >确 定</el-button>
-    </div> -->
+        @click="handleConfirm"
+        >确 定</el-button
+      >
+    </div>
   </el-dialog>
 </template>
 
@@ -60,24 +63,14 @@ export default {
       default() {
         return []
       }
-    },
-    /**
-     * 对话框属性设置, 详情配置参考element-ui官网
-     * @link https://element.eleme.cn/2.4/#/zh-CN/component/dialog#attributes
-     */
-    dialogAttrs: {
-      type: Object,
-      default() {
-        return {}
-      }
     }
   },
   inject: ['onConfirm'],
   data() {
     return {
-      buttonData: {},
+      dialogVisible: false,
       dialogTitle: '',
-      visible: false,
+      buttonData: {},
       dialogLoading: null,
       buttonLoading: false,
       slotData: null,
@@ -136,7 +129,7 @@ export default {
         gutter: 15,
         disabled: false,
         loading: false,
-        formBtns: true
+        formBtns: false
       }
     }
   },
@@ -145,7 +138,7 @@ export default {
       return `xve-table-form-dialog-${this.renderKey}`
     },
     hasFooter() {
-      return this.formConf.fields.length > 1
+      return this.formConf.fields && this.formConf.fields.length > 1
     }
   },
   watch: {},
@@ -158,12 +151,12 @@ export default {
     show(buttonData, dialogTitle) {
       this.buttonData = buttonData
       this.dialogTitle = dialogTitle
-      this.visible = true
+      this.dialogVisible = true
     },
     // 开启加载动画
     showDialogLoading() {
       this.$refs.dialog.$once('opened', async () => {
-        this.loading = this.$loading({
+        this.dialogLoading = this.$loading({
           target: `body > .el-dialog__wrapper .${this.customClass} .el-dialog__body`
         })
       })
@@ -172,7 +165,7 @@ export default {
     closeDialogLoading() {
       // 以服务的方式调用的 Loading 需要异步关闭
       this.$nextTick(() => {
-        this.loading.close()
+        this.dialogLoading.close()
       })
     },
     // 显示表单
@@ -199,10 +192,13 @@ export default {
       }
       return form
     },
-    // 确认
-    confirm(formData) {
-      formData = removeEmptyKeys(formData)
-      console.log('confirm', formData)
+    onOpen() {},
+    onClose() {
+      this.dialogLoading = false
+    },
+    onConfirmForm(formData) {
+      // formData = removeEmptyKeys(formData)
+      console.log('onConfirmForm', formData)
       this.formConf.loading = true
       this.buttonLoading = true
       const done = (close = true) => {
@@ -213,11 +209,17 @@ export default {
       this.onConfirm()(this.buttonData, formData, done)
       // this.$emit('onconfirm', this.buttonData, formData, done)
     },
-    // 重置
-    resetFields() {
-      // this.$refs.form.resetFields()
-      // this.slotData = null
-      console.log('resetFields')
+    onResetForm() {
+      console.log('onResetForm')
+    },
+    // 确认
+    handleConfirm() {
+      this.$refs.formRender.submitForm()
+    },
+    //重置
+    handleReset() {
+      console.log(this.$refs)
+      this.$refs.formRender.resetForm()
     }
   }
 }
