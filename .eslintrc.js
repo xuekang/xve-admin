@@ -18,12 +18,12 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-unused-vars': 0,
+    'no-unused-vars': 0, //允许未使用的变量存在
     'prettier/prettier': [
       'warn',
       {
         singleQuote: true, //代码行后面需不需要生成分号
-        semi: false
+        semi: false //分号检查，不显示分号
       }
     ]
   }
