@@ -12,10 +12,7 @@
     @open="onOpen"
     @close="onClose"
   >
-    <div
-      v-if="formConf.fields && formConf.fields.length > 0"
-      class="form-container"
-    >
+    <div v-if="hasForm" class="form-container">
       <form-render
         :key="formKey"
         ref="formRender"
@@ -25,7 +22,7 @@
       />
     </div>
 
-    <div v-show="hasFooter" slot="footer">
+    <div v-show="hasForm" slot="footer">
       <el-button :size="buttonSize" @click="handleReset">重 置</el-button>
       <el-button
         type="primary"
@@ -35,13 +32,24 @@
         >确 定</el-button
       >
     </div>
+    <el-image
+      ref="previwImage"
+      style="display: none;"
+      :src="previewUrl"
+      :preview-src-list="previewList"
+    >
+    </el-image>
   </el-dialog>
 </template>
 
 <script>
 import FormRender from '@/components/FormGenerator/parser'
-import { removeEmptyKeys } from '@/utils'
-
+import { removeEmptyKeys, isFalse } from '@/utils'
+const units = {
+  KB: 1024,
+  MB: 1024 * 1024,
+  GB: 1024 * 1024 * 1024
+}
 export default {
   components: {
     FormRender
@@ -68,54 +76,15 @@ export default {
   inject: ['onConfirm'],
   data() {
     return {
+      buttonData: {},
+      buttonLoading: false,
       dialogVisible: false,
       dialogTitle: '',
-      buttonData: {},
       dialogLoading: null,
-      buttonLoading: false,
+      previewUrl: '',
+      previewList: [],
       slotData: null,
       formKey: +new Date(),
-      formConf1: {
-        fields: [
-          {
-            __config__: {
-              label: '单行文本1',
-              labelWidth: null,
-              showLabel: true,
-              changeTag: true,
-              tag: 'el-input',
-              tagIcon: 'input',
-              required: true,
-              layout: 'colFormItem',
-              span: 24,
-              document: 'https://element.eleme.cn/#/zh-CN/component/input',
-              regList: [],
-              formId: 112,
-              renderKey: 1675306901087
-            },
-            __slot__: {
-              prepend: '',
-              append: ''
-            },
-            placeholder: '请输入单行文本1',
-            style: {
-              width: '100%'
-            },
-            clearable: true,
-            __vModel__: 'field112'
-          }
-        ],
-        formRef: 'elForm',
-        formModel: 'formData',
-        size: 'small',
-        labelPosition: 'right',
-        labelWidth: 100,
-        formRules: 'rules',
-        span: 6,
-        gutter: 15,
-        disabled: false,
-        formBtns: true
-      },
       formConf: {},
       formConfCopy: {
         fields: [],
@@ -137,8 +106,10 @@ export default {
     customClass() {
       return `xve-table-form-dialog-${this.renderKey}`
     },
-    hasFooter() {
-      return this.formConf.fields && this.formConf.fields.length > 1
+    hasForm() {
+      return (
+        this.formConf && this.formConf.fields && this.formConf.fields.length > 0
+      )
     }
   },
   watch: {},
@@ -174,23 +145,115 @@ export default {
       const dialogForm = this._.cloneDeep(this.dialogForm)
       this.formKey = +new Date()
       formConfCopy.fields.unshift(...dialogForm)
-      this.fillFormData(formConfCopy.fields, dialogFormData)
+      this.fillFormData(formConfCopy.fields, formConfCopy, dialogFormData, this)
 
-      // const formConf1 = this.formConf1
-      // console.log('showForm', this._.cloneDeep(formConfCopy), this._.cloneDeep(this.formConf1))
       this.formConf = this._.cloneDeep(formConfCopy)
     },
-    // 填充表单数据
-    fillFormData(form, data) {
-      if (data && !this._.isEmpty(data)) {
-        form.forEach(item => {
-          const val = data[item.__vModel__]
-          if (val || val === 0 || val === '0') {
-            item.__config__.defaultValue = val
+    //回填表单
+    fillFormData(fields, formConf, formData, that) {
+      const { formModel, formRef } = formConf
+      fields.forEach((item, i) => {
+        const vModel = item.__vModel__
+        const val = formData[vModel]
+
+        // 设置各表单项的默认值（回填表单）
+        //el-upload
+        this.handleUploadItem(item, vModel, val, formModel, that)
+        //常规表单
+        if (val || val === 0 || val === '0') {
+          item.__config__.defaultValue = val
+        }
+
+        if (Array.isArray(item.__config__.children)) {
+          this.fillFormData(item.__config__.children, formConf, formData, that)
+        }
+      })
+    },
+    //处理upload
+    handleUploadItem(item, vModel, val, formModel, that) {
+      // 特殊处理el-upload，包括 回显图片，on-success等各种回调函数
+      if (item.__config__.tag === 'el-upload') {
+        // 回显图片
+        item['file-list'] = (val || []).map(fileItem => ({
+          name: fileItem.file_origin_name,
+          url: fileItem.thumb,
+          origin: fileItem,
+          id: fileItem.id
+        }))
+        if (!item.headers) item.headers = {}
+        // 如果需要token，可以设置
+        // item.headers.AccessToken = ''
+        // 注意on-success不能绑定箭头函数！！！
+        item['on-success'] = function(resp) {
+          const formRender = that.$refs.formRender
+          if (resp.code === 0) {
+            const prev = formRender[formModel][vModel] || []
+            this.$set(formRender[formModel], vModel, [...prev, ...resp.data])
+            this.elForm.validateField(vModel)
           }
-        })
+        }
+
+        item['on-preview'] = function(file) {
+          const formRender = that.$refs.formRender
+          let file_data = {}
+          if (file.response) {
+            file_data = file.response.data[0]
+          } else {
+            file_data = file.origin
+          }
+          const val = formRender[formModel][vModel] || []
+
+          if (file_data.file_type === 'img') {
+            that.previewUrl = file_data.url
+            that.previewList = []
+            for (let imageIndex in val) {
+              that.previewList.push(val[imageIndex].url)
+            }
+            that.$refs.previwImage.showViewer = true
+          } else {
+            window.open(file_data.url, '_blank')
+          }
+        }
+
+        item['on-remove'] = function(file, fileList) {
+          const formRender = that.$refs.formRender
+          this.$set(
+            formRender[formModel],
+            vModel,
+            fileList.map(f => (f.response ? f.response.data : f.url))
+          )
+          this.elForm.validateField(vModel)
+        }
+
+        item['before-upload'] = function(file) {
+          const config = item.__config__
+          let isRightSize = true
+          let isAccept = true
+          if (item.accept) {
+            isAccept = new RegExp(`${item.accept}`).test(file.type)
+            if (!isAccept) {
+              setTimeout(() => {
+                this.$message({
+                  message: `应该选择${item.accept}类型的文件`,
+                  type: 'warning'
+                })
+              })
+            }
+          }
+          if (config.fileSize) {
+            isRightSize = file.size / units[config.sizeUnit] < config.fileSize
+            if (!isRightSize) {
+              setTimeout(() => {
+                this.$message({
+                  message: `文件大小超过 ${config.fileSize}${config.sizeUnit}`,
+                  type: 'warning'
+                })
+              })
+            }
+          }
+          return isRightSize && isAccept
+        }
       }
-      return form
     },
     onOpen() {},
     onClose() {
@@ -198,15 +261,22 @@ export default {
     },
     onConfirmForm(formData) {
       // formData = removeEmptyKeys(formData)
-      console.log('onConfirmForm', formData)
+      const submitFormData = this._.cloneDeep(formData)
+      console.log('onConfirmForm', submitFormData)
+      for (let index in submitFormData) {
+        if (isFalse(submitFormData[index])) {
+          submitFormData[index] = ''
+        }
+      }
       this.formConf.loading = true
       this.buttonLoading = true
       const done = (close = true) => {
         this.formConf.loading = false
         this.buttonLoading = false
+        this.dialogVisible = false
         if (close) this.visible = false
       }
-      this.onConfirm()(this.buttonData, formData, done)
+      this.onConfirm()(this.buttonData, submitFormData, done)
       // this.$emit('onconfirm', this.buttonData, formData, done)
     },
     onResetForm() {
