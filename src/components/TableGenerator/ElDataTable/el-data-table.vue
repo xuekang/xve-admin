@@ -140,11 +140,71 @@
 
         <!--非树-->
         <template v-else>
-          <el-data-table-column
-            v-for="col in columns"
-            :key="col.prop"
-            v-bind="{ align: columnsAlign, ...col }"
-          />
+          <template v-for="(col, index) in columns">
+            <el-data-table-column
+              v-if="col.type === 'img'"
+              :key="index + '_img'"
+              v-bind="{ align: columnsAlign, ...col }"
+            >
+              <template slot-scope="scope">
+                <el-link
+                  v-if="scope.row[col.prop] && scope.row[col.prop].length > 0"
+                  @click="previweImage($event, scope.row[col.prop])"
+                >
+                  查看({{ scope.row[col.prop].length }}张<i
+                    class="el-icon-picture-outline"
+                  ></i
+                  >)
+                </el-link>
+                <span v-else style="color:#C0C4CC;">暂无数据</span>
+              </template>
+            </el-data-table-column>
+
+            <el-data-table-column
+              v-else-if="col.type === 'video' || col.type === 'file'"
+              :key="index + '_file'"
+              v-bind="{ align: columnsAlign, ...col }"
+            >
+              <template slot-scope="scope">
+                <el-link
+                  v-if="scope.row[col.prop] && scope.row[col.prop].length > 0"
+                  @click="previewFile($event, scope.row[col.prop])"
+                >
+                  查看({{ scope.row[col.prop].length }}个<i
+                    :class="
+                      col.type === 'video'
+                        ? 'el-icon-video-camera'
+                        : 'el-icon-document'
+                    "
+                  ></i
+                  >)
+                </el-link>
+                <span v-else style="color:#C0C4CC;">暂无数据</span>
+              </template>
+            </el-data-table-column>
+
+            <el-data-table-column
+              v-else-if="col.type === 'rich_text'"
+              :key="index + '_rich_text'"
+              v-bind="{ align: columnsAlign, ...col }"
+            >
+              <template slot-scope="scope">
+                <el-link
+                  v-if="scope.row[col.prop]"
+                  @click="previewRichText($event, scope.row[col.prop])"
+                >
+                  查看<i class="el-icon-tickets"></i>
+                </el-link>
+                <span v-else style="color:#C0C4CC;">暂无数据</span>
+              </template>
+            </el-data-table-column>
+
+            <el-data-table-column
+              v-else
+              :key="index"
+              v-bind="{ align: columnsAlign, ...col }"
+            />
+          </template>
         </template>
 
         <!--默认操作列-->
@@ -193,6 +253,50 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
+
+      <el-image
+        ref="previwImage"
+        style="display: none;"
+        :src="previewUrl"
+        :preview-src-list="previewList"
+      >
+      </el-image>
+
+      <el-dialog
+        ref="previwFile"
+        title="查看"
+        :visible.sync="dialogPreviewFileVisible"
+        :modal-append-to-body="false"
+        :append-to-body="true"
+        :lock-scroll="false"
+        width="30%"
+      >
+        <div
+          v-for="(previwFileItem, index) in previewFileList"
+          :key="previwFileItem.id + '_' + index"
+          style="line-height: 1.8;"
+        >
+          <i class="el-icon-view" style="margin-right: 10px;"></i>
+          <el-link
+            :underline="false"
+            @click="toPreviewFile($event, previewFileItem)"
+          >
+            {{ previwFileItem.file_origin_name }}
+          </el-link>
+        </div>
+      </el-dialog>
+
+      <el-dialog
+        ref="previwRichText"
+        title="查看"
+        :visible.sync="dialogPreviewRichTextVisible"
+        :modal-append-to-body="false"
+        :append-to-body="true"
+        :lock-scroll="false"
+      >
+        <!-- eslint-disable-next-line -->
+        <div v-html="previewRichTextContent" />
+      </el-dialog>
     </template>
   </div>
 </template>
@@ -276,6 +380,13 @@ export default {
     pageSizeKey: {
       type: String,
       default: 'page_size'
+    },
+    /**
+     * 查询表头字段名
+     */
+    columnKey: {
+      type: String,
+      default: 'field'
     },
     /**
      * 增删改查的表名
@@ -613,6 +724,12 @@ export default {
   data() {
     return {
       data: [],
+      previewUrl: '',
+      previewList: [],
+      dialogPreviewFileVisible: false,
+      previewFileList: [],
+      previewRichTextContent: '',
+      dialogPreviewRichTextVisible: false,
       searchFormData: {}, // 查询表单数据
       size: this.paginationSize || this.paginationSizes[0],
       page: defaultFirstPage,
@@ -807,6 +924,9 @@ export default {
       // 查询条件
       query[this.searchKey] = this.searchFormData
 
+      //查询字段
+      query[this.columnKey] = this.getShowColumn()
+
       // 分页参数
       query[this.pageSizeKey] = this.hasPagination
         ? this.size
@@ -833,6 +953,14 @@ export default {
       }
 
       return params
+    },
+    //获取显示表头
+    getShowColumn() {
+      const data = []
+      this.columns.forEach(item => {
+        data.push(item.prop)
+      })
+      return data
     },
     // 解析响应数据
     parseResponse(raw, getListArgs) {
@@ -1064,6 +1192,33 @@ export default {
     iconShow(index, record) {
       //      return index ===0 && record.children && record.children.length > 0;
       return record[this.treeChildKey] && record[this.treeChildKey].length > 0
+    },
+    previweImage(event, list) {
+      if (!(list && list.length > 0)) {
+        this.$showInfo('暂无数据')
+        return true
+      }
+      this.previewList = []
+      list.forEach((item, index) => {
+        if (index === 0) {
+          this.previewUrl = item['url']
+        }
+        this.previewList.push(item['url'])
+      })
+      this.$refs.previwImage.showViewer = true
+    },
+    previewFile(event, list) {
+      this.previewFileList = list
+      this.dialogPreviewFileVisible = true
+    },
+    toPreviewFile(event, listItem) {
+      window.open(listItem.url, '_blank')
+    },
+    previewRichText(event, content) {
+      console.log(content)
+
+      this.previewRichTextContent = content
+      this.dialogPreviewRichTextVisible = true
     }
   }
 }

@@ -16,7 +16,8 @@
         ref="dialog"
         :render-key="_.uniqueId(renderKey)"
         :button-size="buttonSize"
-        :dialog-form="dialogForm"
+        :default-form-conf="defaultFormConf"
+        :dialog-form-fields="dialogFormFields"
         v-bind="dialogAttrs"
       />
     </div>
@@ -141,21 +142,30 @@ export default {
       }
     },
     /**
-     * 表单弹框数据
-     */
-    dialogForm: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    /**
      * 表单弹框属性
      */
     dialogAttrs: {
       type: Object,
       default() {
         return {}
+      }
+    },
+    /**
+     * 弹框表单属性
+     */
+    defaultFormConf: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    /**
+     * 弹框表单数据
+     */
+    dialogFormFields: {
+      type: Array,
+      default() {
+        return []
       }
     },
     /**
@@ -266,8 +276,6 @@ export default {
       // console.log(111111, this.$refs.dialog1)
 
       this.$refs.dialog.showForm(this._.cloneDeep(dialogFormData))
-
-      // console.log('onShowFormDialog', buttonData, dialogTitle, deepClone(dialogForm), dialogFormData, dialogAttrs)
     },
     // 获取请求信息
     getInfo(buttonData) {

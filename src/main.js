@@ -26,8 +26,9 @@ Object.keys(filters).forEach(key => {
 })
 
 // 全局方法挂载
-import { showErr } from '@/utils/common-tool'
+import { showErr, showInfo } from '@/utils/common-tool'
 Vue.prototype.$showErr = showErr
+Vue.prototype.$showInfo = showInfo
 import _ from 'lodash'
 Vue.prototype._ = _
 import axios from 'axios'

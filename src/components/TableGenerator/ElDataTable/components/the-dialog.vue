@@ -65,8 +65,15 @@ export default {
       type: String,
       default: 'small'
     },
-    // 按钮尺寸
-    dialogForm: {
+    //弹框表单属性
+    defaultFormConf: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    // 表单字段数据
+    dialogFormFields: {
       type: Array,
       default() {
         return []
@@ -85,21 +92,7 @@ export default {
       previewList: [],
       slotData: null,
       formKey: +new Date(),
-      formConf: {},
-      formConfCopy: {
-        fields: [],
-        formRef: 'elForm',
-        formModel: 'formData',
-        size: 'small',
-        labelPosition: 'right',
-        labelWidth: 100,
-        formRules: 'rules',
-        span: 6,
-        gutter: 15,
-        disabled: false,
-        loading: false,
-        formBtns: false
-      }
+      formConf: {}
     }
   },
   computed: {
@@ -141,13 +134,18 @@ export default {
     },
     // 显示表单
     showForm(dialogFormData) {
-      const formConfCopy = this._.cloneDeep(this.formConfCopy)
-      const dialogForm = this._.cloneDeep(this.dialogForm)
+      const defaultFormConf = this._.cloneDeep(this.defaultFormConf)
+      const dialogFormFields = this._.cloneDeep(this.dialogFormFields)
       this.formKey = +new Date()
-      formConfCopy.fields.unshift(...dialogForm)
-      this.fillFormData(formConfCopy.fields, formConfCopy, dialogFormData, this)
+      defaultFormConf.fields.unshift(...dialogFormFields)
+      this.fillFormData(
+        defaultFormConf.fields,
+        defaultFormConf,
+        dialogFormData,
+        this
+      )
 
-      this.formConf = this._.cloneDeep(formConfCopy)
+      this.formConf = this._.cloneDeep(defaultFormConf)
     },
     //回填表单
     fillFormData(fields, formConf, formData, that) {
@@ -194,6 +192,7 @@ export default {
         }
 
         item['on-preview'] = function(file) {
+          if (!file) return false
           const formRender = that.$refs.formRender
           let file_data = {}
           if (file.response) {
