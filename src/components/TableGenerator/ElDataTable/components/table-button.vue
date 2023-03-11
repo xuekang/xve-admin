@@ -186,7 +186,8 @@ export default {
   inject: ['onConfirm', 'getRequestParams'],
   data() {
     return {
-      buttonLoading: false
+      buttonLoading: false,
+      dialogLoading: null
     }
   },
   mounted() {},
@@ -262,19 +263,18 @@ export default {
      */
     async showFormDialog(buttonData) {
       const dialogTitle = this.title || this.text
-      this.$refs.dialog.show(buttonData, dialogTitle)
 
       // console.log('showFormDialog', buttonData)
       let dialogFormData = {}
       if (this.getUrl) {
-        this.$refs.dialog.showDialogLoading()
+        this.buttonLoading = true
         dialogFormData = await this.getInfo(buttonData).finally(() => {
-          this.$refs.dialog.closeDialogLoading()
+          this.buttonLoading = false
         })
       }
 
       // console.log(111111, this.$refs.dialog1)
-
+      this.$refs.dialog.show(buttonData, dialogTitle)
       this.$refs.dialog.showForm(this._.cloneDeep(dialogFormData))
     },
     // 获取请求信息
