@@ -325,6 +325,13 @@ export default {
   },
   props: {
     /**
+     * 页面权限id
+     */
+    pageAuthId: {
+      type: String,
+      default: ''
+    },
+    /**
      * 表格数据请求url, 如果为空, 则不会发送请求; 改变url, 则table会重新发送请求
      */
     url: {
@@ -920,6 +927,8 @@ export default {
       let query = {}
       query.crudTableName = this.crudTableName
       Object.assign(query, this._extraQuery)
+
+      query.pageAuthId = this.pageAuthId
 
       // 查询条件
       query[this.searchKey] = this.searchFormData
